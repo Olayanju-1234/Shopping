@@ -8,3 +8,5 @@ class BadRequestError extends AppError {
         this.statusCodes = StatusCodes.BAD_REQUEST
     }
 }
+
+module.exports = BadRequestError
