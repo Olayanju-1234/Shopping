@@ -7,6 +7,7 @@ const errorHandler = (
     next
 ) => {
 
+    // Validation error
     if(err.name === "ValidationError") {
         return res.status(StatusCodes.BAD_REQUEST).send({
             type: "ValidationError",
