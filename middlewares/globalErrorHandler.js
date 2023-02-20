@@ -7,34 +7,35 @@ const errorHandler = (
     next
 ) => {
 
+    // App error
+    const appError = {
+        statusCodes: err.statusCodes || StatusCodes.INTERNAL_SERVER_ERROR,
+        message: err.message || "Something went wrong",
+    }
+
     // Validation error
     if(err.name === "ValidationError") {
-        return res.status(StatusCodes.BAD_REQUEST).send({
-            type: "ValidationError",
-            details: err.details
-        })
+       appError.message = Object.values(err.errors).map((val) => val.message)
+       appError.statusCodes = StatusCodes.BAD_REQUEST
     }
 
     // Duplicate error
     if(err.code === 11000) {
-        return res.status(StatusCodes.BAD_REQUEST).send({
-            type: "DuplicateError",
-            details: err.keyValue
-        })
+       appError.message = "Duplicate field value entered"
+        appError.statusCodes = StatusCodes.BAD_REQUEST
+
     }
 
     // Cast error
     if(err.name === "CastError") {
-        return res.status(StatusCodes.BAD_REQUEST).send({
-            type: "CastError",
-            details: err.value
-        })
+        appError.message = `Resource not found. Invalid: ${err.path}`
+        appError.statusCodes = StatusCodes.NOT_FOUND
     }
 
     // Default error
-    return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({
-        type: "InternalServerError",
-        details: err
+    return res.status(appError.statusCodes).json({
+        success: false,
+        message: appError.message
     })
 }
 

@@ -7,24 +7,30 @@ const AppError = require('../errors/errors')
 
 const register = async (req, res) => {
     const {firstName, lastName, email, username, password} = req.body
+
     // Validate fields
-    // if (!email || !username || !password) {
-    //     throw new AppError.BadRequestError('Make sure all required fields are filled')
-    // }
+    if (!email || !username || !password) {
+        throw new AppError.BadRequestError('Make sure all required fields are filled')
+    }
 
-    // // Check if a user exists already
-    // const emailExists = await User.findOne({email})
-    // if(emailExists) {
-    //     throw new AppError.BadRequestError("Email taken")
-    // }
+    // Check if a user exists already
+    const emailExists = await User.findOne({email})
+    if(emailExists) {
+        throw new AppError.BadRequestError("Email taken")
+    }
 
-    // const usernameExists = await User.findOne({username})
-    // if(usernameExists) {
-    //     throw new AppError.BadRequestError("Username taken")
-    // }
+    const usernameExists = await User.findOne({username})
+    if(usernameExists) {
+        throw new AppError.BadRequestError("Username taken")
+    }
 
+    // Hash password
+    const salt = await bcrypt.genSalt(10)
+    const hashedPassword = await bcrypt.hash(password, salt)
+
+    // Create new user
     const newUser = await User.create({
-        firstName, lastName, email, username, password
+        firstName, lastName, email, username, password: hashedPassword
     })
 
     res.status(StatusCodes.CREATED).json({
@@ -35,7 +41,29 @@ const register = async (req, res) => {
 }
 
 const login = async (req, res) => {
-    
+    const {username, password} = req.body
+
+    // Validate fields
+    if (!username || !password) {
+        throw new AppError.BadRequestError('Make sure all required fields are filled')
+    }
+
+    // Check if user exists
+    const usernameExists = await User.findOne({username})
+    if(!usernameExists) {
+        throw new AppError.NotFoundError("User not found, Please register")
+    }
+
+    // Check if password is correct
+    const isPasswordCorrect = await bcrypt.compare(password, usernameExists.password)
+    if(!isPasswordCorrect) {
+        throw new AppError.BadRequestError("Incorrect password")
+    }
+
+    res.status(StatusCodes.OK).json({
+        success : true,
+        user: usernameExists
+    })
 }
 
 const logout = async (req, res) => {
