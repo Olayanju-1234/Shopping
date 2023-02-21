@@ -22,6 +22,10 @@ const userSchema = new Schema({
     password : {
         type : String,
         required : true
+    },
+    role: {
+        type : String,
+        default : "user"
     }
 })
 
@@ -30,7 +34,7 @@ userSchema.pre('save', async function(){
     this.password = await bcrypt.hash(this.password, salt);
 });
 
-userSchema.methods.matchedPassword = async (checkPassword) => {
+userSchema.methods.matchedPassword = async function (checkPassword) {
     return await bcrypt.compare(checkPassword, this.password)
 }
 module.exports = mongoose.model('User', userSchema);
