@@ -1,12 +1,15 @@
 const User = require('../models/UserModel')
-const bcrypt = require('bcrypt');
 require('express-async-errors');
 const { StatusCodes } = require('http-status-codes')
+const jwt = require('jsonwebtoken')
 const AppError = require('../errors/errors')
 
 
 const register = async (req, res) => {
     const {firstName, lastName, email, username, password} = req.body
+
+    // token
+    const accessToken = jwt.sign( {username}, process.env.TOKEN_SECRET, { expiresIn: 60 * 60});
 
     // Validate fields
     if (!email || !username || !password) {
@@ -24,18 +27,15 @@ const register = async (req, res) => {
         throw new AppError.BadRequestError("Username taken")
     }
 
-    // Hash password
-    const salt = await bcrypt.genSalt(10)
-    const hashedPassword = await bcrypt.hash(password, salt)
-
     // Create new user
     const newUser = await User.create({
-        firstName, lastName, email, username, password: hashedPassword
+        firstName, lastName, email, username, password
     })
 
     res.status(StatusCodes.CREATED).json({
         success : true,
-        user: newUser
+        user: newUser,
+        accessToken
     })
 
 }
@@ -67,8 +67,15 @@ const login = async (req, res) => {
 }
 
 const logout = async (req, res) => {
-    
+    res.status(StatusCodes.OK).json({
+        success : true,
+        message: "Logged out"
+    })
 }
+
+function generateAccessToken(username) {
+    return jwt.sign(username, process.env.TOKEN_SECRET, {expiresIn: 60 * 60});
+  }
 
 module.exports = {
     register,

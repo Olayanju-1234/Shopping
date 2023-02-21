@@ -1,7 +1,9 @@
 const express = require('express')
 require('dotenv').config();
 const errorHandler = require('./middlewares/globalErrorHandler')
-
+const cookieParser = require('cookie-parser')
+const bodyParser = require('body-parser')
+const helmet = require('helmet') 
 // routes
 const authRoute = require('./routes/authRoute')
 const app = express()
@@ -10,9 +12,19 @@ const connectDB = require('./config/connectDB')
 
 connectDB()
 
-app.use(express.json())
+// Helmet
+app.use(helmet());
 
+// Cookie parser
+app.use(cookieParser())
 
+// allow the express server to process POST request rendered by the ejs files 
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+
+// Body parser
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({extended: true}));
 // Use routes
 app.use("/api/v1/auth", authRoute)
 
