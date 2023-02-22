@@ -6,6 +6,7 @@ const bodyParser = require('body-parser')
 const helmet = require('helmet') 
 // routes
 const authRoute = require('./routes/authRoute')
+const userRoute = require('./routes/userRoute')
 const app = express()
 
 const connectDB = require('./config/connectDB')
@@ -25,8 +26,9 @@ app.use(express.urlencoded({ extended: false }));
 // Body parser
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
-// Use routes
+// Use routes localhost:4000/api/v1/
 app.use("/api/v1/auth", authRoute)
+app.use("/api/v1/users", userRoute)
 
 app.use("/", (req, res) => {
     res.send("Server side rendering...")

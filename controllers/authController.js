@@ -2,7 +2,6 @@ const User = require('../models/UserModel')
 require('express-async-errors');
 const { StatusCodes } = require('http-status-codes')
 const {generateAccessToken} = require('../config/jsonwebtoken')
-const asyncHandler = require('express-async-handler')
 const AppError = require('../errors/errors')
 
 
