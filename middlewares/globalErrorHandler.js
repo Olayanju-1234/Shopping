@@ -21,7 +21,7 @@ const errorHandler = (
 
     // Duplicate error
     if(err.code === 11000) {
-       appError.message = "Duplicate field value entered"
+        appError.message = `${Object.keys(err.keyValue)} is already taken`
         appError.statusCodes = StatusCodes.BAD_REQUEST
 
     }

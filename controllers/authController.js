@@ -16,6 +16,10 @@ const register = async (req, res) => {
     if(emailExists) {
         throw new AppError.BadRequestError("Email taken")
     }
+    // Check if req.body is empty
+    if (Object.keys(req.body).length === 0) {
+        throw new AppError.BadRequestError("Please provide a valid data")
+    }
 
     const usernameExists = await User.findOne({username})
     if(usernameExists) {
@@ -44,6 +48,10 @@ const login = async (req, res) => {
     const usernameExists = await User.findOne({username})
     if(!usernameExists) {
         throw new AppError.NotFoundError("User not found, Please register")
+    }
+    // Check if req.body is empty
+    if (Object.keys(req.body).length === 0) {
+        throw new AppError.BadRequestError("Please provide a valid data")
     }
     // Check if password is correct
     const passwordMatch = await usernameExists.matchedPassword(password)

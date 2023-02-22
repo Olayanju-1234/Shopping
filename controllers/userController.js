@@ -24,15 +24,34 @@ const getUserById = async (req, res) => {
         message : "User found",
         user });
 };
+
 const updateProfile = async (req, res) => {
     const user = await User.findByIdAndUpdate(req.params.id, {
-        firstName:req?.body?.firstName,
-        lastName:req?.body?.lastName,
-        email:req?.body?.email,
-        username:req?.body?.username
-    }, {
-        new: true
+        $set: req.body
+    }, { new: true });
+    // Check if user exists
+    if (!user) {
+        throw new AppError.NotFoundError("User not found")
+    }
+    // Check if req.body is empty
+    if (Object.keys(req.body).length === 0) {
+        throw new AppError.BadRequestError("Please provide a valid data")
+    }
+    // Check if email || username is taken
+    const usernameOrEmailExists = await User.findOne({ $or: [{ username: req.body.username }, { email: req.body.email }] });
+    if (usernameOrEmailExists) {
+        throw new AppError.BadRequestError("Username or email already exists")
+    }
+
+    res.status(StatusCodes.OK).json({
+        success : true,
+        user
     })
+
+
+};
+const deleteUser = async (req, res) => {
+    const user = await User.findByIdAndDelete(req.params.id);
     // Check if user exists
     if (!user) {
         throw new AppError.NotFoundError("User not found")
@@ -42,11 +61,6 @@ const updateProfile = async (req, res) => {
         message : true,
         user
     })
-
-
-};
-const deleteUser = async (req, res) => {
-    
 };
 
 module.exports = {

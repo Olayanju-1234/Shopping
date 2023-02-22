@@ -2,6 +2,7 @@ const express = require('express')
 require('dotenv').config();
 const errorHandler = require('./middlewares/globalErrorHandler')
 const cookieParser = require('cookie-parser')
+const morgan = require('morgan');
 const bodyParser = require('body-parser')
 const helmet = require('helmet') 
 // routes
@@ -26,6 +27,10 @@ app.use(express.urlencoded({ extended: false }));
 // Body parser
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
+
+// Morgan
+app.use(morgan('dev'));
+  
 // Use routes localhost:4000/api/v1/
 app.use("/api/v1/auth", authRoute)
 app.use("/api/v1/users", userRoute)
