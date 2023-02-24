@@ -6,10 +6,12 @@ const {
     deleteUser
 } = require('../controllers/userController');
 
+const authMiddleware = require('../middlewares/authMiddleware');
+
 router.route('/').get(getAllUsers);
 
 router.route('/:id')
-    .get(getUserById)
+    .get(authMiddleware, getUserById)
     .patch(updateProfile)
     .delete(deleteUser)
 ;

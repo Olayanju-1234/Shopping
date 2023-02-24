@@ -1,7 +1,16 @@
 const jwt = require('jsonwebtoken')
 
-const generateAccessToken = (username) => {
-    return jwt.sign({username}, process.env.TOKEN_SECRET, { expiresIn: 60 * 60 * 24 });
-}
+// create access token
+const generateAccessToken = ({username}) => {
+    const token =  jwt.sign({username}, process.env.TOKEN_SECRET, { expiresIn: process.env.expiresIn });
+    return token
+};
 
-module.exports = { generateAccessToken };
+// verify access token
+const verifyAccessToken = ({token}) => {
+    const user = jwt.verify(token, process.env.TOKEN_SECRET);
+    return user
+};
+
+
+module.exports = { generateAccessToken, verifyAccessToken };
