@@ -26,7 +26,9 @@ const getUserById = async (req, res) => {
 };
 
 const updateProfile = async (req, res) => {
-    const user = await User.findByIdAndUpdate(req.params.id, {
+    // id
+    const { _id } = req.user;
+    const user = await User.findByIdAndUpdate( _id, {
         $set: req.body
     }, { new: true });
     // Check if user exists
@@ -63,9 +65,41 @@ const deleteUser = async (req, res) => {
     })
 };
 
+const blockUser = async (req, res) => {
+    const { id } = req.params
+    const block = User.findByIdAndUpdate(id, {
+        $set: { isBlocked: true }
+    }, { new: true })
+    // Check if user exists
+    if (!block) {
+        throw new AppError.NotFoundError("User not found")
+    }
+    res.status(StatusCodes.OK).json({
+        message : true,
+        block
+    })
+}
+
+const unblockUser = async (req, res) => {
+    const { id } = req.params
+    const unblock = User.findByIdAndUpdate(id, {
+        $set: { isBlocked: false }
+    }, { new: true })
+    // Check if user exists
+    if (!unblock) {
+        throw new AppError.NotFoundError("User not found")
+    }
+    res.status(StatusCodes.OK).json({
+        message : true,
+        unblock
+    })
+}
+
 module.exports = {
     getAllUsers,
     getUserById,
     updateProfile,
-    deleteUser
+    deleteUser,
+    blockUser,
+    unblockUser
 };

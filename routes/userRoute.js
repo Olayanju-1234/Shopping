@@ -3,16 +3,22 @@ const {
     getAllUsers,
     getUserById,
     updateProfile,
-    deleteUser
+    deleteUser,
+    blockUser,
+    unblockUser
 } = require('../controllers/userController');
 
-const authMiddleware = require('../middlewares/authMiddleware');
+const {authMiddleware,
+isAdmin} = require('../middlewares/authMiddleware');
 
 router.route('/').get(getAllUsers);
+router.put("/edit", authMiddleware, updateProfile)
+router.put('/block/:id', authMiddleware, isAdmin, blockUser)
+router.put('/unblock/:id', authMiddleware, isAdmin, unblockUser)
+
 
 router.route('/:id')
-    .get(authMiddleware, getUserById)
-    .patch(updateProfile)
+    .get(authMiddleware, isAdmin, getUserById)
     .delete(deleteUser)
 ;
 

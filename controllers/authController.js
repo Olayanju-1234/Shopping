@@ -62,7 +62,7 @@ const login = async (req, res) => {
     res.status(StatusCodes.OK).json({
         success : true,
         user: usernameExists,
-        token: generateAccessToken(usernameExists?._id)
+        token: generateAccessToken(usernameExists._id)
     })
 }
 
