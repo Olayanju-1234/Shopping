@@ -2,6 +2,7 @@ const User = require('../models/UserModel');
 const { StatusCodes } = require('http-status-codes');
 const AppError = require('../errors/errors')
 require('express-async-errors');
+const validateMongoId = require('../utils/validateMongoId');
 
 const getAllUsers = async (req, res) => {
     const users = await User.find();
@@ -13,8 +14,13 @@ const getAllUsers = async (req, res) => {
         message : "All users",
         users });
 };
+
 const getUserById = async (req, res) => {
-    const user = await User.findById(req.params.id);
+    const { id } = req.params
+    // Validate id
+    validateMongoId(id);
+    
+    const user = await User.findById(id);
     // If no user
     if (!user) {
         throw new AppError.NotFoundError("No user with this ID found")
@@ -52,8 +58,12 @@ const updateProfile = async (req, res) => {
 
 
 };
+
 const deleteUser = async (req, res) => {
-    const user = await User.findByIdAndDelete(req.params.id);
+    const { id } = req.params
+    // Validate id
+    validateMongoId(id);
+    const user = await User.findByIdAndDelete(id);
     // Check if user exists
     if (!user) {
         throw new AppError.NotFoundError("User not found")
@@ -67,33 +77,44 @@ const deleteUser = async (req, res) => {
 
 const blockUser = async (req, res) => {
     const { id } = req.params
-    const block = User.findByIdAndUpdate(id, {
+    // Validate id
+    validateMongoId(id);
+
+    const block = await User.findByIdAndUpdate(id, {
         $set: { isBlocked: true }
     }, { new: true })
     // Check if user exists
     if (!block) {
         throw new AppError.NotFoundError("User not found")
     }
+    // Check if user is already blocked
+    // if (block.isBlocked === true) {
+    //     throw new AppError.BadRequestError("User is already blocked")
+    // }
     res.status(StatusCodes.OK).json({
-        message : true,
-        block
+        message : "User blocked",
     })
-}
+};
 
 const unblockUser = async (req, res) => {
     const { id } = req.params
-    const unblock = User.findByIdAndUpdate(id, {
+    // Validate id
+    validateMongoId(id);
+    const unblock = await User.findByIdAndUpdate(id, {
         $set: { isBlocked: false }
     }, { new: true })
     // Check if user exists
     if (!unblock) {
         throw new AppError.NotFoundError("User not found")
     }
+    // Check if user is already unblocked
+    // if (unblock.isBlocked === false) {
+    //     throw new AppError.BadRequestError("User is already unblocked")
+    // }
     res.status(StatusCodes.OK).json({
-        message : true,
-        unblock
+        message : "User unblocked",
     })
-}
+};
 
 module.exports = {
     getAllUsers,
