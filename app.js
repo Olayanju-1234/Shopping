@@ -8,6 +8,7 @@ const helmet = require('helmet')
 // routes
 const authRoute = require('./routes/authRoute')
 const userRoute = require('./routes/userRoute')
+const productRoute = require('./routes/productRoute')
 const app = express()
 
 const connectDB = require('./config/connectDB')
@@ -33,6 +34,7 @@ app.use(morgan('dev'));
 // Use routes localhost:4000/api/v1/
 app.use("/api/v1/auth", authRoute)
 app.use("/api/v1/users", userRoute)
+app.use("/api/v1/products", productRoute)
 
 app.use("/", (req, res) => {
     res.send("Server side rendering...")
