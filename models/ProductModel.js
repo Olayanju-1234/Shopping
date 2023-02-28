@@ -23,26 +23,27 @@ const productSchema = new Schema({
         required: true,
     },
     category: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Category',
+        type: String,
+        required: true
     },
     brand : {
         type: String,
-        enum: ["Apple", "Samsung", "Lenovo", "Microsoft", "Asus", "Dell", "HP", "Acer", "LG"]
+        required: true
     },
     sold : {
         type: Number,
         default: 0
     },
     quantity: {
-        type: Number
+        type: Number,
+        required: true
     },
     images: {
         type: Array
     },
     color: {
         type: String,
-        enum : ['red','green','blue','white','black','yellow','orange','purple','pink','brown','grey','silver','gold','multicolor'],
+        required: true
     },
     ratings: [
         {
