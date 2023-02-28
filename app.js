@@ -17,9 +17,6 @@ connectDB()
 // Helmet
 app.use(helmet());
 
-// Cookie parser
-app.use(cookieParser())
-
 // allow the express server to process POST request rendered by the ejs files 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -27,6 +24,8 @@ app.use(express.urlencoded({ extended: false }));
 // Body parser
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
+// Cookie parser
+app.use(cookieParser())
 
 // Morgan
 app.use(morgan('dev'));

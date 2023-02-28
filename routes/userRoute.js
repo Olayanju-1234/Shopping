@@ -5,11 +5,12 @@ const {
     updateProfile,
     deleteUser,
     blockUser,
-    unblockUser
+    unblockUser,
 } = require('../controllers/userController');
 
 const {authMiddleware,
 isAdmin} = require('../middlewares/authMiddleware');
+
 
 router.route('/').get(getAllUsers);
 router.put("/edit", authMiddleware, updateProfile)

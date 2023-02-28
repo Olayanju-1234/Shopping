@@ -4,6 +4,7 @@ const AppError = require('../errors/errors')
 require('express-async-errors');
 const validateMongoId = require('../utils/validateMongoId');
 
+
 const getAllUsers = async (req, res) => {
     const users = await User.find();
     // If no user
@@ -37,6 +38,7 @@ const updateProfile = async (req, res) => {
     const user = await User.findByIdAndUpdate( _id, {
         $set: req.body
     }, { new: true });
+    console.log(req.user);
     // Check if user exists
     if (!user) {
         throw new AppError.NotFoundError("User not found")

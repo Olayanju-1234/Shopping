@@ -3,6 +3,8 @@ require('express-async-errors');
 const { StatusCodes } = require('http-status-codes')
 const {generateAccessToken} = require('../config/jsonwebtoken')
 const AppError = require('../errors/errors')
+const { generateRefreshToken } = require('../config/refreshToken');
+const jwt = require('jsonwebtoken');
 
 
 const register = async (req, res) => {
@@ -58,7 +60,14 @@ const login = async (req, res) => {
     if(!passwordMatch) {
         throw new AppError.BadRequestError("Incorrect password")
     }
-
+    const refreshToken = await generateRefreshToken(usernameExists._id)
+    const updateUser = await User.findByIdAndUpdate(usernameExists._id, {refreshToken: refreshToken},
+        {new:true});
+    res.cookie('refreshToken', refreshToken, {
+        httpOnly:true,
+        maxAge:72 * 60 * 60 * 1000
+    }
+    )
     res.status(StatusCodes.OK).json({
         success : true,
         user: usernameExists,
@@ -66,15 +75,67 @@ const login = async (req, res) => {
     })
 }
 
+// handleRefreshToken
+const handleRefreshToken = async (req, res) => {
+    const cookie = req.cookies
+    if(!cookie.refreshToken) {
+        throw new AppError.BadRequestError("No refresh token")
+    }
+
+    const refreshToken = cookie.refreshToken
+
+    const user = await User.findOne({refreshToken});
+    if(!user) {
+        throw new AppError.BadRequestError("No user found/ Please login or register/ No refresh token")
+    }   
+    jwt.verify(refreshToken, process.env.JWT_SECRET, (err, decoded) => {
+        if (err || user.id !== decoded.id) {
+            throw new AppError.BadRequestError("Invalid refresh token")
+        }
+        const accessToken = generateAccessToken(user.id)
+        res.status(StatusCodes.OK).json({
+            success : true,
+            token: accessToken
+    })
+})}
+
+
+
 const logout = async (req, res) => {
+    const cookie = req.cookies
+
+    if(!cookie.refreshToken) {
+        throw new AppError.BadRequestError("No refresh token")
+    }
+
+    const refreshToken = cookie.refreshToken
+
+    const user = await User.findOne({ refreshToken });
+
+    if(!user) {
+        res.clearCookie('refreshToken', {
+            httpOnly:true,
+            secure : true})
+        throw new AppError.ForbiddenError("No user found/ Please login or register/ No refresh token")
+    }
+
+    await User.findOneAndUpdate({refreshToken}, {refreshToken: null})
+    
+    res.clearCookie('refreshToken', {
+        httpOnly:true,
+        secure : true})
     res.status(StatusCodes.OK).json({
         success : true,
-        message: "Logged out"
+        message: "Logged out successfully"
     })
 }
+
+   
+
 
 module.exports = {
     register,
     login,
-    logout
+    logout,
+    handleRefreshToken
 }
