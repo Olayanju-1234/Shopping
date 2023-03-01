@@ -2,14 +2,17 @@ const router = require('express').Router();
 const { createProduct,
         getSingleProduct,
         getAllProducts,
-        updateProduct } = require('../controllers/productController');
+        updateProduct,
+        deleteProduct } = require('../controllers/productController');
+const { isAdmin, authMiddleware } = require('../middlewares/authMiddleware');
 
 router.route('/').
-    post(createProduct).
+    post(authMiddleware, isAdmin,createProduct).
     get(getAllProducts);
 
 router.route('/:id').
     get(getSingleProduct).
-    put(updateProduct);
+    put(authMiddleware, isAdmin, updateProduct).
+    delete(authMiddleware, isAdmin,deleteProduct);
 
 module.exports = router

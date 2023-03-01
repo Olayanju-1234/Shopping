@@ -37,12 +37,13 @@ const updateProduct = async (req, res) => {
         message : "Product updated",
         updateProduct
     })
-    
+
 }
 
 // get a product
 const getSingleProduct = async (req, res) => {
     const { id } = req.params
+    
     const product = await Product.findById(id);
     res.status(StatusCodes.OK).json({
         message : "Product found",
@@ -52,10 +53,60 @@ const getSingleProduct = async (req, res) => {
 
 // get all products
 const getAllProducts = async (req, res) => {
-    const getAll = await Product.find();
+    // Filtering
+    const queryObject = { ...req.query }
+    const excludedFields = ['page', 'sort', 'limit', 'fields']
+    excludedFields.forEach(el => delete queryObject[el])
+
+    let queryStr = JSON.stringify(queryObject)
+    queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, match => `$${match}`)
+  
+    const query = Product.find(JSON.parse(queryStr))
+
+    // Sorting
+    if (req.query.sort) {
+        const sortBy = req.query.sort.split(',').join(' ')
+        query = query.sort(sortBy)
+    } else {
+        query = query.sort('-createdAt')
+    }
+
+    // Field limiting
+    if (req.query.fields) {
+        const fields = req.query.fields.split(',').join(' ')
+        query = query.select(fields)
+    } else {
+        query = query.select('-__v')
+    }
+
+    // Pagination
+    const page = req.query.page * 1 || 1
+    const limit = req.query.limit * 1 || 100
+    const skip = (page - 1) * limit
+    query = query.skip(skip).limit(limit)
+
+    if (req.query.page) {
+        const numProducts = await Product.countDocuments()
+        if (skip >= numProducts) throw new Error('This page does not exist')
+    }
+
+    // Find the products
+    const products = await query;
     res.status(StatusCodes.OK).json({
         message : "All products",
-        getAll
+        products
+    })
+}
+
+const deleteProduct = async (req, res) => {
+    const { id } = req.params
+    const product = await Product.findByIdAndDelete(id);
+    if (!product) {
+        throw new AppError.NotFoundError("Product not found")
+    }
+    res.status(StatusCodes.OK).json({
+        message : "Product deleted",
+        product
     })
 }
 
@@ -64,5 +115,6 @@ module.exports = {
     createProduct,
     getSingleProduct,
     updateProduct,
-    getAllProducts
+    getAllProducts,
+    deleteProduct
 }

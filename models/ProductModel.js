@@ -32,7 +32,7 @@ const productSchema = new Schema({
     },
     sold : {
         type: Number,
-        default: 0
+        default: 0,
     },
     quantity: {
         type: Number,
