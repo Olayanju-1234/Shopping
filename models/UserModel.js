@@ -70,7 +70,7 @@ userSchema.methods.matchedPassword = async function (checkPassword) {
     return await bcrypt.compare(checkPassword, this.password)
 }
 
-userSchema.methods.createPasswordResetToken = async function () {
+userSchema.methods.getResetPasswordToken = async function () {
     const resetToken = crypto.randomBytes(32).toString('hex');
     this.passwordResetToken = crypto.createHash('sha256').update(resetToken).digest('hex');
     this.passwordResetExpires = Date.now() + 30 * 60 * 1000;

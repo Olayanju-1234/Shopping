@@ -4,7 +4,9 @@ const {
     login,
     logout,
     handleRefreshToken,
-    updatePassword
+    updatePassword,
+    resetPasswordToken,
+    resetPassword
 } = require('../controllers/authController')
 
 const { authMiddleware } = require('../middlewares/authMiddleware')
@@ -14,5 +16,7 @@ router.post("/login", login)
 router.post("/logout", logout)
 router.get("/refresh", handleRefreshToken)
 router.put("/password", authMiddleware, updatePassword)
+router.post("/reset-password-token", authMiddleware, resetPasswordToken)
+router.put("/resetpassword/:token", resetPassword)
 
 module.exports = router;

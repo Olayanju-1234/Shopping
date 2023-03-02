@@ -6,6 +6,8 @@ const AppError = require('../errors/errors')
 const { generateRefreshToken } = require('../config/refreshToken');
 const jwt = require('jsonwebtoken');
 const validateMongoId = require('../utils/validateMongoId');
+const crypto = require('crypto');
+const sendEmail = require('./emailController');
 
 
 const register = async (req, res) => {
@@ -149,6 +151,54 @@ const updatePassword = async (req, res) => {
     }
 }
 
+const resetPasswordToken = async (req, res) => {
+
+    const { email } = req.body;
+    const user = await User.findOne({email})
+    if(!user) {
+        throw new AppError.NotFoundError("User not found")
+    }
+    const resetToken = await user.getResetPasswordToken()
+    await user.save()
+    const resetUrl = `Hi, ${user.username} \n\n Please click on the link below to reset your password \n\n ${process.env.CLIENT_URL}/api/v1/auth/resetpassword/${resetToken}, it expires in 10 minutes`
+    const message = {
+        to: user.email,
+        text: "Hey there, you're receiving this email because you (or someone else) have requested the reset of a password. Please click on the following link, or paste this into your browser to complete the process within 10 minutes of receiving it: http://localhost:3000/resetpassword/",
+        subject: "Password Reset",
+        html: resetUrl,
+    }
+    sendEmail(message)
+    res.status(StatusCodes.OK).json({
+        success : true,
+        resetToken
+    })
+
+}
+
+const resetPassword = async(req, res) => {
+    const { password } = req.body;
+    const { token } = req.params;
+    const hashedToken = crypto.createHash('sha256').
+    update(token).digest('hex')
+    const user = await User.findOne({passwordResetToken: hashedToken,
+    passwordResetExpires: {$gt: Date.now()
+        },
+    })
+    if (!user) {
+        throw new AppError.BadRequestError("Token Expired, try again")
+    }
+    user.password = password;
+    user.passwordResetToken = undefined;
+    user.passwordResetExpires = undefined;
+    await user.save()
+    res.status(StatusCodes.OK).json({
+        success : true,
+        message: "Password reset successful"
+    })
+
+
+}
+
 
    
 
@@ -158,5 +208,7 @@ module.exports = {
     login,
     logout,
     handleRefreshToken,
-    updatePassword
+    updatePassword,
+    resetPasswordToken,
+    resetPassword
 }
