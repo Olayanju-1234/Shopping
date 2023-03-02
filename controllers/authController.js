@@ -5,6 +5,7 @@ const {generateAccessToken} = require('../config/jsonwebtoken')
 const AppError = require('../errors/errors')
 const { generateRefreshToken } = require('../config/refreshToken');
 const jwt = require('jsonwebtoken');
+const validateMongoId = require('../utils/validateMongoId');
 
 
 const register = async (req, res) => {
@@ -75,7 +76,6 @@ const login = async (req, res) => {
     })
 }
 
-// handleRefreshToken
 const handleRefreshToken = async (req, res) => {
     const cookie = req.cookies
     if(!cookie.refreshToken) {
@@ -98,8 +98,6 @@ const handleRefreshToken = async (req, res) => {
             token: accessToken
     })
 })}
-
-
 
 const logout = async (req, res) => {
     const cookie = req.cookies
@@ -130,6 +128,28 @@ const logout = async (req, res) => {
     })
 }
 
+const updatePassword = async (req, res) => {
+    const { _id } = req.user;
+    const { password } = req.body;
+    validateMongoId(_id)
+    const user = await User.findById(_id)
+
+    if(password) {
+        user.password = password
+        const updatedPassword = await user.save()
+
+        res.status(StatusCodes.OK).json({
+            success : true,
+            user: updatedPassword
+            
+        })
+    } else {
+        throw new AppError.BadRequestError("Please provide a valid data")
+
+    }
+}
+
+
    
 
 
@@ -137,5 +157,6 @@ module.exports = {
     register,
     login,
     logout,
-    handleRefreshToken
+    handleRefreshToken,
+    updatePassword
 }

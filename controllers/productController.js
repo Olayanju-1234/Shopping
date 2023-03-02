@@ -61,7 +61,7 @@ const getAllProducts = async (req, res) => {
     let queryStr = JSON.stringify(queryObject)
     queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, match => `$${match}`)
   
-    const query = Product.find(JSON.parse(queryStr))
+    let query = Product.find(JSON.parse(queryStr))
 
     // Sorting
     if (req.query.sort) {
@@ -81,13 +81,13 @@ const getAllProducts = async (req, res) => {
 
     // Pagination
     const page = req.query.page * 1 || 1
-    const limit = req.query.limit * 1 || 100
+    const limit = req.query.limit * 1 || 5
     const skip = (page - 1) * limit
     query = query.skip(skip).limit(limit)
 
     if (req.query.page) {
         const numProducts = await Product.countDocuments()
-        if (skip >= numProducts) throw new Error('This page does not exist')
+        if (skip >= numProducts) throw new AppError.NotFoundError('This page does not exist')
     }
 
     // Find the products
