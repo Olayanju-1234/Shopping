@@ -9,6 +9,7 @@ const helmet = require('helmet')
 const authRoute = require('./routes/authRoute')
 const userRoute = require('./routes/userRoute')
 const productRoute = require('./routes/productRoute')
+const blogRoute = require('./routes/blogRoute')
 const app = express()
 
 const connectDB = require('./config/connectDB')
@@ -35,6 +36,8 @@ app.use(morgan('dev'));
 app.use("/api/v1/auth", authRoute)
 app.use("/api/v1/users", userRoute)
 app.use("/api/v1/products", productRoute)
+app.use("/api/v1/blogs", blogRoute)
+
 
 app.use("/", (req, res) => {
     res.send("Server side rendering...")
