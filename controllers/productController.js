@@ -1,4 +1,5 @@
 const Product = require('../models/ProductModel');
+const User = require('../models/UserModel');
 const { StatusCodes } = require('http-status-codes');
 const AppError = require('../errors/errors')
 require('express-async-errors');
@@ -110,11 +111,70 @@ const deleteProduct = async (req, res) => {
     })
 }
 
+const wishlist = async (req, res) => {
+    const { _id } = req.user
+    const { productId } = req.body
+    
+    const user = await User.findById(_id);
+    const inWishlist = user.wishlist.find(id => id.toString() === productId)
+    if (inWishlist) {
+        let user = await User.findByIdAndUpdate(_id, {
+            $pull: { wishlist: productId }
+        }, { new: true })
+        res.status(StatusCodes.OK).json({
+            message : "Product removed from wishlist",
+            user
+        })
+    } else {
+        let user = await User.findByIdAndUpdate(_id, {
+            $push: {wishlist: productId}
+        }, { new: true })
+        res.status(StatusCodes.OK).json({
+            message : "Product added to wishlist",
+            user
+    })
+}
+}
+
+const rating = async (req, res) => {
+    const { _id } = req.user
+    const { productId, rating } = req.body
+
+    const product = await Product.findById(productId);
+    const rated = product.ratings.find(rating => rating.postedBy.toString() === _id.toString())
+    if (rated) {
+        await Product.updateOne(
+            { ratings: { $elemMatch: rated } },
+            { $set: { "ratings.$.star": rating } },
+            { new: true }
+        )
+    } else {
+        await Product.findByIdAndUpdate(productId, {
+            $push: { ratings: { star: rating, postedBy: _id } }
+        }, { new: true })
+    }
+    const getAllRatings = await Product.findById(productId)
+    let ratings = getAllRatings.ratings.length
+    let sumOfRatings = getAllRatings.ratings.reduce((acc, item) => {
+        return acc + item.star
+    }
+    , 0)
+    let actualRating = Math.round(sumOfRatings / ratings)
+    let ratedProduct = await Product.findByIdAndUpdate(productId, {
+        totalRatings: actualRating
+        }, { new: true }) 
+    res.status(StatusCodes.OK).json({
+        message : "Product rated",
+        ratedProduct
+    })
+}
 
 module.exports = {
     createProduct,
     getSingleProduct,
     updateProduct,
     getAllProducts,
-    deleteProduct
+    deleteProduct,
+    wishlist,
+    rating
 }
