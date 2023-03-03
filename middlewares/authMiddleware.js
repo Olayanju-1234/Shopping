@@ -12,7 +12,6 @@ const authMiddleware = async (req, res, next) => {
         const decoded = verifyAccessToken(token)
         const user = await User.findById(decoded.id)
         req.user = user
-        console.log(req.user);
         next()
     } catch (error) {
         next(error)
