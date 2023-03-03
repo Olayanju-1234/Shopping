@@ -30,7 +30,7 @@ const updateBlog = async (req, res) => {
 const getSingleBlog = async (req, res) => {
     const { id } = req.params
     validateMongoId(id)
-    const getBlog = await Blog.findById(id);
+    const getBlog = await Blog.findById(id).populate('likes', 'dislikes');
     if (!getBlog) {
         throw new AppError.NotFoundError("Blog not found")
     }
