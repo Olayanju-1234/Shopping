@@ -12,6 +12,7 @@ const productRoute = require('./routes/productRoute')
 const blogRoute = require('./routes/blogRoute')
 const productCategoryRoute = require('./routes/productCategoryRoute')
 const blogCategoryRoute = require('./routes/blogCategoryRoute')
+const brandRoute = require('./routes/brandRoute')
 const app = express()
 
 const connectDB = require('./config/connectDB')
@@ -41,7 +42,7 @@ app.use("/api/v1/products", productRoute)
 app.use("/api/v1/blogs", blogRoute)
 app.use("/api/v1/product-categories", productCategoryRoute)
 app.use("/api/v1/blog-categories", blogCategoryRoute)
-
+app.use("/api/v1/brands", brandRoute)
 
 app.use("/", (req, res) => {
     res.send("Server side rendering...")
