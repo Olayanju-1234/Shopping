@@ -38,9 +38,8 @@ const blogSchema = new Schema({
             ref: "User"
         }
     ],
-    image : {
-        type: String,
-        default: "https://thumbs.dreamstime.com/b/blog-information-website-concept-workplace-background-text-view-above-127465079.jpg"
+    images: {
+        type: Array
     },
     author : {
         type: String,

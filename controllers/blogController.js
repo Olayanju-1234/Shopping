@@ -1,10 +1,9 @@
 const Blog = require('../models/BlogModel')
-const User = require('../models/UserModel')
 const { StatusCodes } = require('http-status-codes')
 const AppError = require('../errors/errors')
-require('express-async-errors')
+const { uploadImage } = require('../utils/cloudinary');
 const validateMongoId = require('../utils/validateMongoId')
-
+const fs = require('fs')
 
 const createBlog = async (req, res) => {
     const newBlog = await Blog.create(req.body)
@@ -210,6 +209,27 @@ const deleteBlog = async (req, res) => {
     })
 }
 
+const uploadImages = async (req, res) => {
+    const { id } = req.params
+    validateMongoId(id);
+    const uploader = async (path) => await uploadImage(path, 'images')
+    const urls = []
+    const files = req.files;
+    for (const file of files) {
+        const { path } = file
+        const newPath = await uploader(path);
+        urls.push(newPath)
+        fs.unlinkSync(path)
+    }
+    const blog = await Blog.findByIdAndUpdate(id, {
+        images: urls.map(url => {return  url })
+    }, { new: true })
+    res.status(StatusCodes.OK).json({
+        message : "Post images uploaded",
+        blog
+    })
+}
+
 module.exports = {
     createBlog,
     updateBlog,
@@ -217,5 +237,6 @@ module.exports = {
     getAllBlogs,
     deleteBlog,
     likePost,
-    dislikePost
+    dislikePost,
+    uploadImages
 }
