@@ -138,19 +138,22 @@ const wishlist = async (req, res) => {
 
 const rating = async (req, res) => {
     const { _id } = req.user
-    const { productId, rating } = req.body
+    const { productId, rating, comment } = req.body
 
     const product = await Product.findById(productId);
     const rated = product.ratings.find(rating => rating.postedBy.toString() === _id.toString())
     if (rated) {
         await Product.updateOne(
             { ratings: { $elemMatch: rated } },
-            { $set: { "ratings.$.star": rating } },
+            { $set: { "ratings.$.star": rating, "ratings.$.comment": comment } },
             { new: true }
         )
     } else {
         await Product.findByIdAndUpdate(productId, {
-            $push: { ratings: { star: rating, postedBy: _id } }
+            $push: { ratings: { 
+                star: rating,
+                comment: comment, 
+                postedBy: _id } }
         }, { new: true })
     }
     const getAllRatings = await Product.findById(productId)

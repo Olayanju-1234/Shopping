@@ -98,7 +98,7 @@ const likePost = async (req, res) => {
     if (isDisliked) {
         const blog = await Blog.findByIdAndUpdate(postId, {
             $pull: {
-                dislikes: loggedInUser
+                dislikes: InUser
             },
             isDisliked: false
         },
