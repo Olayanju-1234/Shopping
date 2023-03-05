@@ -14,12 +14,19 @@ const productCategoryRoute = require('./routes/productCategoryRoute')
 const blogCategoryRoute = require('./routes/blogCategoryRoute')
 const brandRoute = require('./routes/brandRoute')
 const couponRoute = require('./routes/couponRoute')
+
+
+// cors
+const cors = require('cors')
+
 const app = express()
 
 const connectDB = require('./config/connectDB')
 
 connectDB()
 
+// cors
+app.use(cors())
 // Helmet
 app.use(helmet());
 
@@ -45,6 +52,7 @@ app.use("/api/v1/product-categories", productCategoryRoute)
 app.use("/api/v1/blog-categories", blogCategoryRoute)
 app.use("/api/v1/brands", brandRoute)
 app.use("/api/v1/coupons", couponRoute)
+
 
 app.use("/", (req, res) => {
     res.send("Server side rendering...")
