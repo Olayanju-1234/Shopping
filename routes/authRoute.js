@@ -2,6 +2,7 @@ const router = require('express').Router();
 const {
     register,
     login,
+    adminLogin,
     logout,
     handleRefreshToken,
     updatePassword,
@@ -13,6 +14,7 @@ const { authMiddleware } = require('../middlewares/authMiddleware')
 
 router.post("/", register)
 router.post("/login", login)
+router.post("/login/admin", adminLogin)
 router.post("/logout", logout)
 router.get("/refresh", handleRefreshToken)
 router.put("/password", authMiddleware, updatePassword)

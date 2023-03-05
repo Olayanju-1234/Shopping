@@ -64,7 +64,7 @@ const login = async (req, res) => {
         throw new AppError.BadRequestError("Incorrect password")
     }
     const refreshToken = await generateRefreshToken(usernameExists._id)
-    const updateUser = await User.findByIdAndUpdate(usernameExists._id, {refreshToken: refreshToken},
+    await User.findByIdAndUpdate(usernameExists._id, {refreshToken: refreshToken},
         {new:true});
     res.cookie('refreshToken', refreshToken, {
         httpOnly:true,
@@ -75,6 +75,44 @@ const login = async (req, res) => {
         success : true,
         user: usernameExists,
         token: generateAccessToken(usernameExists._id)
+    })
+}
+
+const adminLogin = async (req, res) => {
+    const {username, password} = req.body
+    // Validate fields
+    if (!username || !password) {
+        throw new AppError.BadRequestError('Make sure all required fields are filled')
+    }
+    // Check if user exists
+    const user = await User.findOne({username})
+    if(!user) {
+        throw new AppError.NotFoundError("User not found, Please register")
+    }
+    if( user.role !== 'admin') {
+        throw new AppError.BadRequestError("You are not an admin")
+    }
+    // Check if req.body is empty
+    if (Object.keys(req.body).length === 0) {
+        throw new AppError.BadRequestError("Please provide a valid data")
+    }
+    // Check if password is correct
+    const passwordMatch = await user.matchedPassword(password)
+    if(!passwordMatch) {
+        throw new AppError.BadRequestError("Incorrect password")
+    }
+    const refreshToken = await generateRefreshToken(user._id)
+    await User.findByIdAndUpdate(user._id, {refreshToken: refreshToken},
+        {new:true});
+    res.cookie('refreshToken', refreshToken, {
+        httpOnly:true,
+        maxAge:72 * 60 * 60 * 1000
+    }
+    )
+    res.status(StatusCodes.OK).json({
+        success : true,
+        user: user,
+        token: generateAccessToken(user._id)
     })
 }
 
@@ -163,7 +201,7 @@ const resetPasswordToken = async (req, res) => {
     const resetUrl = `Hi, ${user.username} \n\n Please click on the link below to reset your password \n\n ${process.env.CLIENT_URL}/api/v1/auth/resetpassword/${resetToken}, it expires in 10 minutes`
     const message = {
         to: user.email,
-        text: "Hey there, you're receiving this email because you (or someone else) have requested the reset of a password. Please click on the following link, or paste this into your browser to complete the process within 10 minutes of receiving it: http://localhost:3000/resetpassword/",
+        text: "Hey there, you're receiving this email because you (or someone else) have requested the reset of a password",
         subject: "Password Reset",
         html: resetUrl,
     }
@@ -206,6 +244,7 @@ const resetPassword = async(req, res) => {
 module.exports = {
     register,
     login,
+    adminLogin,
     logout,
     handleRefreshToken,
     updatePassword,
