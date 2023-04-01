@@ -5,6 +5,7 @@ const cookieParser = require('cookie-parser')
 const morgan = require('morgan');
 const bodyParser = require('body-parser')
 const helmet = require('helmet') 
+const cors = require('cors')
 // routes
 const authRoute = require('./routes/authRoute')
 const userRoute = require('./routes/userRoute')
@@ -15,33 +16,20 @@ const blogCategoryRoute = require('./routes/blogCategoryRoute')
 const brandRoute = require('./routes/brandRoute')
 const couponRoute = require('./routes/couponRoute')
 
-
-// cors
-const cors = require('cors')
-
 const app = express()
 
 const connectDB = require('./config/connectDB')
-
 connectDB()
 
-// cors
 app.use(cors())
-// Helmet
 app.use(helmet());
-
-// allow the express server to process POST request rendered by the ejs files 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-
-// Body parser
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
-// Cookie parser
 app.use(cookieParser())
-
-// Morgan
 app.use(morgan('dev'));
+app.use(errorHandler)
   
 // Use routes localhost:4000/api/v1/
 app.use("/api/v1/auth", authRoute)
@@ -57,9 +45,6 @@ app.use("/api/v1/coupons", couponRoute)
 app.use("/", (req, res) => {
     res.send("Server side rendering...")
 })
-
-// Error handler
-app.use(errorHandler)
 
 const port = process.env.PORT || 5000;
 const start = async() =>{

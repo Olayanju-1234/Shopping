@@ -8,14 +8,20 @@ const {
     unblockUser,
     getWishlist,
     saveAddress,
+    useCoupon,
+} = require('../controllers/userController');
+
+const {
     userCart,
     getUserCart,
     emptyUserCart,
-    useCoupon,
+} = require('../controllers/cartController')
+
+const {
     createOrder,
     getOrders,
     updateOrderStatus
-} = require('../controllers/userController');
+} = require('../controllers/orderController')
 
 const {authMiddleware,
 isAdmin} = require('../middlewares/authMiddleware');

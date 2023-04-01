@@ -19,7 +19,7 @@ const register = async (req, res) => {
     // Check if a user exists already
     const emailExists = await User.findOne({email})
     if(emailExists) {
-        throw new AppError.BadRequestError("Email taken")
+        throw new AppError.ConflictError("Email taken")
     }
     // Check if req.body is empty
     if (Object.keys(req.body).length === 0) {
@@ -28,7 +28,7 @@ const register = async (req, res) => {
 
     const usernameExists = await User.findOne({username})
     if(usernameExists) {
-        throw new AppError.BadRequestError("Username taken")
+        throw new AppError.ConflictError("Username taken")
     }
 
     // Create new user
@@ -61,7 +61,7 @@ const login = async (req, res) => {
     // Check if password is correct
     const passwordMatch = await usernameExists.matchedPassword(password)
     if(!passwordMatch) {
-        throw new AppError.BadRequestError("Incorrect password")
+        throw new AppError.UnauthorizedError("Incorrect password")
     }
     const refreshToken = await generateRefreshToken(usernameExists._id)
     await User.findByIdAndUpdate(usernameExists._id, {refreshToken: refreshToken},
@@ -90,7 +90,7 @@ const adminLogin = async (req, res) => {
         throw new AppError.NotFoundError("User not found, Please register")
     }
     if( user.role !== 'admin') {
-        throw new AppError.BadRequestError("You are not an admin")
+        throw new AppError.UnauthorizedError("You are not an admin")
     }
     // Check if req.body is empty
     if (Object.keys(req.body).length === 0) {
@@ -192,6 +192,10 @@ const updatePassword = async (req, res) => {
 const resetPasswordToken = async (req, res) => {
 
     const { email } = req.body;
+    // Validate fields
+    if (!email) {
+        throw new AppError.BadRequestError('Make sure all required fields are filled')
+    }
     const user = await User.findOne({email})
     if(!user) {
         throw new AppError.NotFoundError("User not found")
@@ -216,6 +220,14 @@ const resetPasswordToken = async (req, res) => {
 const resetPassword = async(req, res) => {
     const { password } = req.body;
     const { token } = req.params;
+    // Validate fields
+    if (!password) {
+        throw new AppError.BadRequestError('Make sure all required fields are filled')
+    }
+    if (!token) {
+        throw new AppError.UnauthorizedError('Token not found')
+    }
+
     const hashedToken = crypto.createHash('sha256').
     update(token).digest('hex')
     const user = await User.findOne({passwordResetToken: hashedToken,

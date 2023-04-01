@@ -19,6 +19,35 @@ const authMiddleware = async (req, res, next) => {
 
 }
 
+// create jwt token
+// const authMiddleware = async (req, res, next) => {
+//     const token = jwt.sign({ id: req.user.id }, process.env.JWT_SECRET, {
+//         expiresIn: "1d",
+//     });
+//     req.token = token;
+//     next();
+// };
+
+// // verify jwt token
+// const verifyToken = async (req, res, next) => {
+//     const token = jwt.verify(req.token, process.env.JWT_SECRET);
+//     return token;
+// };
+
+// // attach cookie to response
+// const attachToken = async (req, res, next) => {
+//     res.cookie("token", req.token, {
+//         httpOnly: true,
+//         secure: true,
+//         sameSite: "none",
+//     });
+
+//     next();
+// };
+
+
+
+
 const isAdmin = async (req, res, next) => {
     const { username } = req.user
     const adminRole = await User.findOne({ username });
@@ -30,5 +59,5 @@ const isAdmin = async (req, res, next) => {
 }
 
 
-module.exports = {authMiddleware,
+module.exports = {authMiddleware, 
 isAdmin}
