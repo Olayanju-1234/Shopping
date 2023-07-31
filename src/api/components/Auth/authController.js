@@ -1,13 +1,11 @@
-const User = require('../../../../models/UserModel')
-require('express-async-errors');
+const User = require('../User/UserModel')
 const { StatusCodes } = require('http-status-codes')
-const {generateAccessToken} = require('../config/jsonwebtoken')
-const AppError = require('../errors/errors')
-const { generateRefreshToken } = require('../config/refreshToken');
-const jwt = require('jsonwebtoken');
-const validateMongoId = require('../../../../utils/validateMongoId');
 const crypto = require('crypto');
-const sendEmail = require('../../../../utils/nodemailer');
+const jwt = require('jsonwebtoken');
+const {generateAccessToken, generateAccessToken} = require('../../../config/tokens')
+const AppError = require('../../Errors')
+const validateMongoId = require('../../../utils/validateMongoId');
+const sendEmail = require('../../../utils/nodemailer');
 
 
 const register = async (req, res) => {
@@ -31,7 +29,6 @@ const register = async (req, res) => {
         throw new AppError.ConflictError("Username taken")
     }
 
-    // Create new user
     const newUser = await User.create({
         firstName, lastName, email, username, password
     })
@@ -45,20 +42,20 @@ const register = async (req, res) => {
 
 const login = async (req, res) => {
     const {username, password} = req.body
-    // Validate fields
+
     if (!username || !password) {
         throw new AppError.BadRequestError('Make sure all required fields are filled')
     }
-    // Check if user exists
+
     const usernameExists = await User.findOne({username})
     if(!usernameExists) {
         throw new AppError.NotFoundError("User not found, Please register")
     }
-    // Check if req.body is empty
+
     if (Object.keys(req.body).length === 0) {
         throw new AppError.BadRequestError("Please provide a valid data")
     }
-    // Check if password is correct
+
     const passwordMatch = await usernameExists.matchedPassword(password)
     if(!passwordMatch) {
         throw new AppError.UnauthorizedError("Incorrect password")
@@ -97,14 +94,17 @@ const adminLogin = async (req, res) => {
     if (Object.keys(req.body).length === 0) {
         throw new AppError.BadRequestError("Please provide a valid data")
     }
-    // Check if password is correct
+
     const passwordMatch = await user.matchedPassword(password)
+
     if(!passwordMatch) {
         throw new AppError.BadRequestError("Incorrect password")
     }
     const refreshToken = await generateRefreshToken(user._id)
+
     await User.findByIdAndUpdate(user._id, {refreshToken: refreshToken},
         {new:true});
+
     res.cookie('refreshToken', refreshToken, {
         httpOnly:true,
         maxAge:72 * 60 * 60 * 1000
@@ -193,16 +193,18 @@ const updatePassword = async (req, res) => {
 const resetPasswordToken = async (req, res) => {
 
     const { email } = req.body;
-    // Validate fields
+
     if (!email) {
         throw new AppError.BadRequestError('Make sure all required fields are filled')
     }
     const user = await User.findOne({email})
+
     if(!user) {
         throw new AppError.NotFoundError("User not found")
     }
     const resetToken = await user.getResetPasswordToken()
     await user.save()
+
     const resetUrl = `Hi, ${user.username} \n\n Please click on the link below to reset your password \n\n ${process.env.CLIENT_URL}/api/v1/auth/resetpassword/${resetToken}, it expires in 10 minutes`
     
     const message = {
@@ -211,7 +213,9 @@ const resetPasswordToken = async (req, res) => {
         subject: "Password Reset",
         html: resetUrl,
     }
-    sendEmail(message)
+
+    await sendEmail(message)
+
     res.status(StatusCodes.OK).json({
         success : true,
         resetToken
@@ -222,37 +226,40 @@ const resetPasswordToken = async (req, res) => {
 const resetPassword = async(req, res) => {
     const { password } = req.body;
     const { token } = req.params;
-    // Validate fields
+
     if (!password) {
         throw new AppError.BadRequestError('Make sure all required fields are filled')
     }
+
     if (!token) {
         throw new AppError.UnauthorizedError('Token not found')
     }
 
-    const hashedToken = crypto.createHash('sha256').
-    update(token).digest('hex')
+    const hashedToken = crypto.createHash('sha256')
+                            .update(token)
+                            .digest('hex')
+
     const user = await User.findOne({passwordResetToken: hashedToken,
-    passwordResetExpires: {$gt: Date.now()
-        },
-    })
+                            passwordResetExpires: {
+                                $gt: Date.now()
+                            },
+                        })
+
     if (!user) {
         throw new AppError.BadRequestError("Token Expired, try again")
     }
+
     user.password = password;
     user.passwordResetToken = undefined;
     user.passwordResetExpires = undefined;
+
     await user.save()
+
     res.status(StatusCodes.OK).json({
         success : true,
         message: "Password reset successful"
     })
-
-
 }
-
-
-   
 
 
 module.exports = {
