@@ -1,4 +1,6 @@
-const router = require('express').Router();
+const express = require('express');
+const router = express.Router();
+
 const {
     getAllUsers,
     getUserById,
@@ -9,22 +11,23 @@ const {
     getWishlist,
     saveAddress,
     useCoupon,
-} = require('../controllers/userController');
+} = require('./userController');
 
 const {
     userCart,
     getUserCart,
     emptyUserCart,
-} = require('../controllers/cartController')
+} = require('../Cart/cartController')
 
 const {
     createOrder,
     getOrders,
     updateOrderStatus
-} = require('../controllers/orderController')
+} = require('../Order/orderController')
 
 const {authMiddleware,
-isAdmin} = require('../middlewares/authMiddleware');
+        isAdmin
+} = require('../../Middlewares/authMiddleware');
 
 
 router.route('/').get(getAllUsers);

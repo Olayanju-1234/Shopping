@@ -1,11 +1,14 @@
-const router = require('express').Router()
-const { createBrand,
-    updateBrand,
-    getSingleBrand,
-    getAllBrands,   
-    deleteBrand } = require('../controllers/brandController')
+const express = require('express');
+const router = express.Router();
 
-const { authMiddleware, isAdmin } = require('../middlewares/authMiddleware')
+const { createBrand,
+        updateBrand,
+        getSingleBrand,
+        getAllBrands,   
+        deleteBrand 
+} = require('./brandController')
+
+const { authMiddleware, isAdmin } = require('../../Middlewares/authMiddleware')
 
 router.route('/').
     post(authMiddleware, isAdmin, createBrand).

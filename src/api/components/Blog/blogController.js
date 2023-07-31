@@ -1,8 +1,8 @@
-const Blog = require('../models/BlogModel')
+const Blog = require('./BlogModel')
 const { StatusCodes } = require('http-status-codes')
-const AppError = require('../src/api/Errors/errors')
-const { uploadImage } = require('../utils/cloudinary');
-const validateMongoId = require('../utils/validateMongoId')
+const AppError = require('../../Errors/AppError')
+const validateMongoId = require('../../../utils/validateMongoId')
+const { uploadImage } = require('../../../utils/cloudinary');
 const fs = require('fs')
 
 const createBlog = async (req, res) => {

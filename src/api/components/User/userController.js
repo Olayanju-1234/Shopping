@@ -1,9 +1,10 @@
-const User = require('../models/UserModel');
-const Cart = require('../../../../models/CartModel');
-const Coupon = require('../../../../models/CouponModel')
-const { StatusCodes } = require('http-status-codes');
-const AppError = require('../errors/errors')
-const validateMongoId = require('../../../../utils/validateMongoId');
+const User = require('./UserModel');
+const Cart = require('../Cart/CartModel');
+const Coupon = require('../Coupon/couponModel');
+
+const { StatusCodes } = require('http-status-codes')
+const AppError = require('../../Errors/AppError')
+const validateMongoId = require('../../../utils/validateMongoId')
 
 
 const getAllUsers = async (req, res) => {

@@ -1,4 +1,6 @@
-const router = require('express').Router();
+const express = require('express');
+const router = express.Router();
+
 const {
     register,
     login,
@@ -8,9 +10,9 @@ const {
     updatePassword,
     resetPasswordToken,
     resetPassword
-} = require('../controllers/authController')
+} = require('./authController')
 
-const { authMiddleware } = require('../middlewares/authMiddleware')
+const { authMiddleware } = require('../../Middlewares/authMiddleware')
 
 router.post("/", register)
 router.post("/login", login)

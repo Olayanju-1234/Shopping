@@ -1,12 +1,11 @@
-const Order = require('../models/OrderModel')
-const Product = require('../models/ProductModel')
-const Cart = require('../models/CartModel')
+const Order = require('./OrderModel')
+const Cart = require('../Cart/CartModel')
+const Product = require('../Product/productModel')
 
 const uniqid = require('uniqid')
-const AppError = require('../errors/errors')
-
 const { StatusCodes } = require('http-status-codes')
-const validateMongoId = require('../utils/validateMongoId')
+const AppError = require('../../Errors/AppError')
+const validateMongoId = require('../../../utils/validateMongoId')
 
 
 const createOrder = async (req, res) => {

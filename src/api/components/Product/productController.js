@@ -1,11 +1,10 @@
-const Product = require('../../../../models/ProductModel');
-const User = require('../../../../models/UserModel');
-const { StatusCodes } = require('http-status-codes');
-const AppError = require('../errors/errors')
-require('express-async-errors');
-const validateMongoId = require('../../../../utils/validateMongoId');
+const Product = require('./productModel');
+const User = require('../User/UserModel');
+const { StatusCodes } = require('http-status-codes')
+const AppError = require('../../Errors/AppError')
+const validateMongoId = require('../../../utils/validateMongoId')
 const slugify = require('slugify');
-const { uploadImage } = require('../../../../utils/cloudinary');
+const { uploadImage } = require('../../../utils/cloudinary');
 const fs = require('fs');
 
 // Create Product

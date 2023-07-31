@@ -2,8 +2,8 @@ const User = require('../User/UserModel')
 const { StatusCodes } = require('http-status-codes')
 const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
-const {generateAccessToken, generateAccessToken} = require('../../../config/tokens')
-const AppError = require('../../Errors')
+const { generateAccessToken } = require('../../../config/tokens')
+const AppError = require('../../Errors/AppError')
 const validateMongoId = require('../../../utils/validateMongoId');
 const sendEmail = require('../../../utils/nodemailer');
 

@@ -1,8 +1,7 @@
-const Category = require('../models/ProductCategoryModel')
+const Category = require('./productCategoryModel')
 const { StatusCodes } = require('http-status-codes')
-require('express-async-errors')
-const AppEror = require('../errors/errors')
-const validateMongoId = require('../../../../../utils/validateMongoId')
+const AppError = require('../../Errors/AppError')
+const validateMongoId = require('../../../utils/validateMongoId')
 
 const createCategory = async (req, res) => {
     const newCategory = await Category.create(req.body)
@@ -42,7 +41,7 @@ const deleteCategory = async (req, res) => {
     validateMongoId(id)
     const deleteCategory = await Category.findByIdAndDelete(id)
     if (!deleteCategory) {
-        throw new AppEror.NotFoundError("Category not found")
+        throw new AppError.NotFoundError("Category not found")
     }
     res.status(StatusCodes.OK).json({
         success: true,

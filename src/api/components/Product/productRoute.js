@@ -1,4 +1,5 @@
-const router = require('express').Router();
+const express = require('express');
+const router = express.Router();
 
 const { createProduct,
         getSingleProduct,
@@ -7,13 +8,14 @@ const { createProduct,
         deleteProduct,
         wishlist,
         rating,
-        uploadImages } = require('../controllers/productController');
+        uploadImages 
+} = require('./productController');
 
 const { uploadImage, 
-        resizeProductImage } = require('../middlewares/uploadImage');
+        resizeProductImage } = require('../../Middlewares/uploadImage');
 
 const { isAdmin, 
-        authMiddleware } = require('../middlewares/authMiddleware');
+        authMiddleware } = require('../../Middlewares/authMiddleware');
 
 router.route('/').
     post(authMiddleware, isAdmin,createProduct).

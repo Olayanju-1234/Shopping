@@ -1,7 +1,7 @@
-const {generateAccessToken, verifyAccessToken} = require('../config/jsonwebtoken')
+const {generateAccessToken, verifyAccessToken} = require('../../config/tokens')
 const jwt = require('jsonwebtoken')
-const User = require('../models/UserModel')
-const AppError = require('../errors/errors')
+const User = require('../components/User/UserModel')
+const AppError = require('../Errors/AppError')
 
 
 const authMiddleware = async (req, res, next) => {

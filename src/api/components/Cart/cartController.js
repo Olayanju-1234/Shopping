@@ -1,9 +1,9 @@
-const Cart = require('../models/CartModel')
-const User = require('../models/UserModel')
-const Product = require('../models/ProductModel')
+const Cart = require('./CartModel')
+const User = require('../User/UserModel')
+const Product = require('../Product/productModel')
 const { StatusCodes } = require('http-status-codes')
-const AppError = require('../errors/errors')
-const validateMongoId = require('../../../../utils/validateMongoId')
+const AppError = require('../../Errors/AppError')
+const validateMongoId = require('../../../utils/validateMongoId')
 
 const userCart = async (req, res, next) => {
     const { cart } = req.body

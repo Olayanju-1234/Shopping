@@ -1,8 +1,7 @@
-const Blog = require('../models/BlogCategoryModel')
+const Blog = require('./BlogCategoryModel')
 const { StatusCodes } = require('http-status-codes')
-require('express-async-errors')
-const AppEror = require('../errors/errors')
-const validateMongoId = require('../../../../utils/validateMongoId')
+const AppError = require('../../Errors/AppError')
+const validateMongoId = require('../../../utils/validateMongoId')
 
 const createCategory = async (req, res) => {
     const newCategory = await Blog.create(req.body)
@@ -29,7 +28,7 @@ const getSingleCategory = async (req, res) => {
     validateMongoId(id)
     const getCategory = await Blog.findById(id)
     if (!getCategory) {
-        throw new AppEror.NotFoundError("Category not found")
+        throw new AppError.NotFoundError("Category not found")
     }
     res.status(StatusCodes.OK).json({
         success: true,
@@ -42,7 +41,7 @@ const deleteCategory = async (req, res) => {
     validateMongoId(id)
     const deleteCategory = await Blog.findByIdAndDelete(id)
     if (!deleteCategory) {
-        throw new AppEror.NotFoundError("Category not found")
+        throw new AppError.NotFoundError("Category not found")
     }
     res.status(StatusCodes.OK).json({
         success: true,
