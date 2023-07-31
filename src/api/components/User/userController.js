@@ -1,9 +1,9 @@
 const User = require('../models/UserModel');
-const Cart = require('../models/CartModel');
-const Coupon = require('../models/CouponModel')
+const Cart = require('../../../../models/CartModel');
+const Coupon = require('../../../../models/CouponModel')
 const { StatusCodes } = require('http-status-codes');
 const AppError = require('../errors/errors')
-const validateMongoId = require('../utils/validateMongoId');
+const validateMongoId = require('../../../../utils/validateMongoId');
 
 
 const getAllUsers = async (req, res) => {

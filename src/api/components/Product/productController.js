@@ -1,11 +1,11 @@
-const Product = require('../models/ProductModel');
-const User = require('../models/UserModel');
+const Product = require('../../../../models/ProductModel');
+const User = require('../../../../models/UserModel');
 const { StatusCodes } = require('http-status-codes');
 const AppError = require('../errors/errors')
 require('express-async-errors');
-const validateMongoId = require('../utils/validateMongoId');
+const validateMongoId = require('../../../../utils/validateMongoId');
 const slugify = require('slugify');
-const { uploadImage } = require('../utils/cloudinary');
+const { uploadImage } = require('../../../../utils/cloudinary');
 const fs = require('fs');
 
 // Create Product
@@ -177,6 +177,7 @@ const rating = async (req, res) => {
 const uploadImages = async (req, res) => {
     const { id } = req.params
     validateMongoId(id);
+
     const uploader = async (path) => await uploadImage(path, 'images')
     const urls = []
     const files = req.files;
@@ -190,6 +191,7 @@ const uploadImages = async (req, res) => {
     const product = await Product.findByIdAndUpdate(id, {
         images: urls.map(url => {return  url })
     }, { new: true })
+
     res.status(StatusCodes.OK).json({
         message : "Product images uploaded",
         product

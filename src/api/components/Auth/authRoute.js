@@ -18,7 +18,7 @@ router.post("/login/admin", adminLogin)
 router.post("/logout", logout)
 router.get("/refresh", handleRefreshToken)
 router.put("/password", authMiddleware, updatePassword)
-router.post("/reset-password-token", authMiddleware, resetPasswordToken)
+router.post("/reset-password-token", resetPasswordToken)
 router.put("/resetpassword/:token", resetPassword)
 
 module.exports = router;

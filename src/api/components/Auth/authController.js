@@ -1,27 +1,27 @@
-const User = require('../models/UserModel')
+const User = require('../../../../models/UserModel')
 require('express-async-errors');
 const { StatusCodes } = require('http-status-codes')
 const {generateAccessToken} = require('../config/jsonwebtoken')
 const AppError = require('../errors/errors')
 const { generateRefreshToken } = require('../config/refreshToken');
 const jwt = require('jsonwebtoken');
-const validateMongoId = require('../utils/validateMongoId');
+const validateMongoId = require('../../../../utils/validateMongoId');
 const crypto = require('crypto');
-const sendEmail = require('./emailController');
+const sendEmail = require('../../../../utils/nodemailer');
 
 
 const register = async (req, res) => {
     const {firstName, lastName, email, username, password} = req.body
-    // Validate fields
+
     if (!email || !username || !password) {
         throw new AppError.BadRequestError('Make sure all required fields are filled')
     }
-    // Check if a user exists already
+
     const emailExists = await User.findOne({email})
     if(emailExists) {
         throw new AppError.ConflictError("Email taken")
     }
-    // Check if req.body is empty
+   
     if (Object.keys(req.body).length === 0) {
         throw new AppError.BadRequestError("Please provide a valid data")
     }
@@ -80,19 +80,20 @@ const login = async (req, res) => {
 
 const adminLogin = async (req, res) => {
     const {username, password} = req.body
-    // Validate fields
+ 
     if (!username || !password) {
         throw new AppError.BadRequestError('Make sure all required fields are filled')
     }
-    // Check if user exists
+
     const user = await User.findOne({username})
     if(!user) {
         throw new AppError.NotFoundError("User not found, Please register")
     }
+    
     if( user.role !== 'admin') {
         throw new AppError.UnauthorizedError("You are not an admin")
     }
-    // Check if req.body is empty
+
     if (Object.keys(req.body).length === 0) {
         throw new AppError.BadRequestError("Please provide a valid data")
     }
@@ -203,6 +204,7 @@ const resetPasswordToken = async (req, res) => {
     const resetToken = await user.getResetPasswordToken()
     await user.save()
     const resetUrl = `Hi, ${user.username} \n\n Please click on the link below to reset your password \n\n ${process.env.CLIENT_URL}/api/v1/auth/resetpassword/${resetToken}, it expires in 10 minutes`
+    
     const message = {
         to: user.email,
         text: "Hey there, you're receiving this email because you (or someone else) have requested the reset of a password",

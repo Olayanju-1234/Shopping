@@ -2,7 +2,7 @@ const Category = require('../models/ProductCategoryModel')
 const { StatusCodes } = require('http-status-codes')
 require('express-async-errors')
 const AppEror = require('../errors/errors')
-const validateMongoId = require('../utils/validateMongoId')
+const validateMongoId = require('../../../../../utils/validateMongoId')
 
 const createCategory = async (req, res) => {
     const newCategory = await Category.create(req.body)
