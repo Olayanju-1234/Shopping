@@ -1,33 +1,33 @@
-const express = require('express')
+
 require('dotenv').config();
-const errorHandler = require('./src/api/Middlewares/globalErrorHandler')
-const cookieParser = require('cookie-parser')
+require('express-async-errors');
+
+const express = require('express')
 const morgan = require('morgan');
+const cookieParser = require('cookie-parser')
 const bodyParser = require('body-parser')
 const helmet = require('helmet') 
 const cors = require('cors')
-const apiRoutes = require('./src/api/components/index')
-
 
 const app = express()
 
+const apiRoutes = require('./src/api/components/index')
 const connectDB = require('./src/config/connectDB')
-connectDB()
+const errorHandler = require('./src/api/Middlewares/globalErrorHandler')
 
+
+app.use(express.json())
 app.use(cors())
 app.use(helmet());
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({extended: true}));
-app.use(cookieParser())
+app.use(cookieParser(process.env.COOKIE_SECRET))
 app.use(morgan('dev'));
-app.use(errorHandler)
 app.use('/api/v1', apiRoutes)
   
 app.use("/", (req, res) => {
     res.send("Server side rendering...")
 })
+
+app.use(errorHandler)
 
 const port = process.env.PORT || 5000;
 const start = async() =>{

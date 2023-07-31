@@ -1,42 +1,38 @@
+
 const { StatusCodes } = require('http-status-codes');
 
-const errorHandler = (
-    err,
-    req,
-    res,
-    next
-) => {
 
-    // App error
-    const appError = {
-        statusCodes: err.statusCodes || StatusCodes.INTERNAL_SERVER_ERROR,
-        message: err.message || "Something went wrong",
+
+const errorHandler = (err,req,res,next) =>{
+
+    let customError = {
+        statuscode:err.statusCode || StatusCodes.INTERNAL_SERVER_ERROR,
+        msg: err.message || 'Something went wrong, please try again'
+        
+    }
+    console.log(err)
+
+    // validation error (check for err.name === validationError)
+    if(err.name === 'ValidationError'){
+        customError.msg = Object.values(err.errors).map((item) => item.message).join(',');
+        customError.statuscode = 400;
     }
 
-    // Validation error
-    if(err.name === "ValidationError") {
-       appError.message = Object.values(err.errors).map((val) => val.message)
-       appError.statusCodes = StatusCodes.BAD_REQUEST
+    // duplicate error (check for err.code === 11000)
+    if(err.code === 11000){
+        customError.msg = `Duplicate value entered for ${Object.keys(err.keyValue)} field, please pick another value`;
+        customError.statuscode = 400;
     }
 
-    // Duplicate error
-    if(err.code === 11000) {
-        appError.message = `${Object.keys(err.keyValue)} is already taken`
-        appError.statusCodes = StatusCodes.BAD_REQUEST
-
+    // cast error (check for err.name === castError)
+    if(err.name === 'CastError'){
+        customError.msg = `No item found with such id`;
+        customError.statuscode = 404;
     }
 
-    // Cast error
-    if(err.name === "CastError") {
-        appError.message = `Resource not found. Invalid: ${err.path}`
-        appError.statusCodes = StatusCodes.NOT_FOUND
-    }
 
-    // Default error
-    return res.status(appError.statusCodes).json({
-        success: false,
-        message: appError.message
-    })
+    return res.status(customError.statuscode).json({success: false, msg: customError.msg});
+    
 }
 
 module.exports = errorHandler;

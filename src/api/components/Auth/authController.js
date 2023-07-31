@@ -4,6 +4,7 @@ const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
 const { generateAccessToken } = require('../../../config/tokens')
 const AppError = require('../../Errors/AppError')
+const { BadRequestError, ConflictError, ForbiddenError, NotFoundError, UnauthorizedError} = require('../../Errors/errors')
 const validateMongoId = require('../../../utils/validateMongoId');
 const sendEmail = require('../../../utils/nodemailer');
 
@@ -12,21 +13,19 @@ const register = async (req, res) => {
     const {firstName, lastName, email, username, password} = req.body
 
     if (!email || !username || !password) {
-        throw new AppError.BadRequestError('Make sure all required fields are filled')
+        throw new BadRequestError('Make sure all required fields are filled')
     }
 
     const emailExists = await User.findOne({email})
+
     if(emailExists) {
-        throw new AppError.ConflictError("Email taken")
-    }
-   
-    if (Object.keys(req.body).length === 0) {
-        throw new AppError.BadRequestError("Please provide a valid data")
+        throw new ConflictError("Email already exists")
     }
 
     const usernameExists = await User.findOne({username})
+    
     if(usernameExists) {
-        throw new AppError.ConflictError("Username taken")
+        throw new ConflictError("Username taken")
     }
 
     const newUser = await User.create({
@@ -44,30 +43,31 @@ const login = async (req, res) => {
     const {username, password} = req.body
 
     if (!username || !password) {
-        throw new AppError.BadRequestError('Make sure all required fields are filled')
+        throw new BadRequestError('Make sure all required fields are filled')
     }
 
     const usernameExists = await User.findOne({username})
-    if(!usernameExists) {
-        throw new AppError.NotFoundError("User not found, Please register")
-    }
 
-    if (Object.keys(req.body).length === 0) {
-        throw new AppError.BadRequestError("Please provide a valid data")
+    if(!usernameExists) {
+        throw new NotFoundError("User not found, Please register")
     }
 
     const passwordMatch = await usernameExists.matchedPassword(password)
+
     if(!passwordMatch) {
-        throw new AppError.UnauthorizedError("Incorrect password")
+        throw new UnauthorizedError("Incorrect password")
     }
+
     const refreshToken = await generateRefreshToken(usernameExists._id)
+
     await User.findByIdAndUpdate(usernameExists._id, {refreshToken: refreshToken},
         {new:true});
+
     res.cookie('refreshToken', refreshToken, {
         httpOnly:true,
         maxAge:72 * 60 * 60 * 1000
-    }
-    )
+    })
+
     res.status(StatusCodes.OK).json({
         success : true,
         user: usernameExists,
@@ -79,27 +79,24 @@ const adminLogin = async (req, res) => {
     const {username, password} = req.body
  
     if (!username || !password) {
-        throw new AppError.BadRequestError('Make sure all required fields are filled')
+        throw new BadRequestError('Make sure all required fields are filled')
     }
 
     const user = await User.findOne({username})
     if(!user) {
-        throw new AppError.NotFoundError("User not found, Please register")
+        throw new NotFoundError("User not found, Please register")
     }
     
     if( user.role !== 'admin') {
-        throw new AppError.UnauthorizedError("You are not an admin")
-    }
-
-    if (Object.keys(req.body).length === 0) {
-        throw new AppError.BadRequestError("Please provide a valid data")
+        throw new UnauthorizedError("You are not an admin")
     }
 
     const passwordMatch = await user.matchedPassword(password)
 
     if(!passwordMatch) {
-        throw new AppError.BadRequestError("Incorrect password")
+        throw new BadRequestError("Incorrect password")
     }
+
     const refreshToken = await generateRefreshToken(user._id)
 
     await User.findByIdAndUpdate(user._id, {refreshToken: refreshToken},
@@ -119,21 +116,25 @@ const adminLogin = async (req, res) => {
 
 const handleRefreshToken = async (req, res) => {
     const cookie = req.cookies
+
     if(!cookie.refreshToken) {
-        throw new AppError.BadRequestError("No refresh token")
+        throw new BadRequestError("No refresh token")
     }
 
     const refreshToken = cookie.refreshToken
 
     const user = await User.findOne({refreshToken});
     if(!user) {
-        throw new AppError.BadRequestError("No user found/ Please login or register/ No refresh token")
+        throw new BadRequestError("No user found/ Please login or register/ No refresh token")
     }   
+
     jwt.verify(refreshToken, process.env.JWT_SECRET, (err, decoded) => {
         if (err || user.id !== decoded.id) {
-            throw new AppError.BadRequestError("Invalid refresh token")
+            throw new BadRequestError("Invalid refresh token")
         }
+
         const accessToken = generateAccessToken(user.id)
+
         res.status(StatusCodes.OK).json({
             success : true,
             token: accessToken
@@ -144,7 +145,7 @@ const logout = async (req, res) => {
     const cookie = req.cookies
 
     if(!cookie.refreshToken) {
-        throw new AppError.BadRequestError("No refresh token")
+        throw new BadRequestError("No refresh token")
     }
 
     const refreshToken = cookie.refreshToken
@@ -155,7 +156,8 @@ const logout = async (req, res) => {
         res.clearCookie('refreshToken', {
             httpOnly:true,
             secure : true})
-        throw new AppError.ForbiddenError("No user found/ Please login or register/ No refresh token")
+
+        throw new ForbiddenError("No user found/ Please login or register/ No refresh token")
     }
 
     await User.findOneAndUpdate({refreshToken}, {refreshToken: null})
@@ -163,6 +165,7 @@ const logout = async (req, res) => {
     res.clearCookie('refreshToken', {
         httpOnly:true,
         secure : true})
+
     res.status(StatusCodes.OK).json({
         success : true,
         message: "Logged out successfully"
@@ -173,6 +176,7 @@ const updatePassword = async (req, res) => {
     const { _id } = req.user;
     const { password } = req.body;
     validateMongoId(_id)
+
     const user = await User.findById(_id)
 
     if(password) {
@@ -185,7 +189,7 @@ const updatePassword = async (req, res) => {
             
         })
     } else {
-        throw new AppError.BadRequestError("Please provide a valid data")
+        throw new BadRequestError("Please provide a valid data")
 
     }
 }
@@ -195,12 +199,12 @@ const resetPasswordToken = async (req, res) => {
     const { email } = req.body;
 
     if (!email) {
-        throw new AppError.BadRequestError('Make sure all required fields are filled')
+        throw new BadRequestError('Make sure all required fields are filled')
     }
     const user = await User.findOne({email})
 
     if(!user) {
-        throw new AppError.NotFoundError("User not found")
+        throw new NotFoundError("User not found")
     }
     const resetToken = await user.getResetPasswordToken()
     await user.save()
@@ -228,11 +232,11 @@ const resetPassword = async(req, res) => {
     const { token } = req.params;
 
     if (!password) {
-        throw new AppError.BadRequestError('Make sure all required fields are filled')
+        throw new BadRequestError('Make sure all required fields are filled')
     }
 
     if (!token) {
-        throw new AppError.UnauthorizedError('Token not found')
+        throw new UnauthorizedError('Token not found')
     }
 
     const hashedToken = crypto.createHash('sha256')
@@ -246,7 +250,7 @@ const resetPassword = async(req, res) => {
                         })
 
     if (!user) {
-        throw new AppError.BadRequestError("Token Expired, try again")
+        throw new BadRequestError("Token Expired, try again")
     }
 
     user.password = password;
