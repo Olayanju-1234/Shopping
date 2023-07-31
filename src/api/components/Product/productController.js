@@ -2,9 +2,9 @@ const Product = require('./productModel');
 const User = require('../User/UserModel');
 const { StatusCodes } = require('http-status-codes')
 const AppError = require('../../Errors/AppError')
-const validateMongoId = require('../../../utils/validateMongoId')
+const validateMongoId = require('../../Utils/validateMongoId')
 const slugify = require('slugify');
-const { uploadImage } = require('../../../utils/cloudinary');
+const { uploadImage } = require('../../Utils/cloudinary');
 const fs = require('fs');
 
 // Create Product

@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/Olayanju-1234/Shopping#readme",
   "devDependencies": {
+    "eslint": "^8.46.0",
     "nodemon": "^2.0.20"
   },
   "dependencies": {

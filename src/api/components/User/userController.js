@@ -4,7 +4,7 @@ const Coupon = require('../Coupon/couponModel');
 
 const { StatusCodes } = require('http-status-codes')
 const AppError = require('../../Errors/AppError')
-const validateMongoId = require('../../../utils/validateMongoId')
+const validateMongoId = require('../../Utils/validateMongoId')
 
 
 const getAllUsers = async (req, res) => {

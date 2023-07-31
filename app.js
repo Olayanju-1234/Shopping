@@ -5,14 +5,13 @@ require('express-async-errors');
 const express = require('express')
 const morgan = require('morgan');
 const cookieParser = require('cookie-parser')
-const bodyParser = require('body-parser')
 const helmet = require('helmet') 
 const cors = require('cors')
 
 const app = express()
 
 const apiRoutes = require('./src/api/components/index')
-const connectDB = require('./src/config/connectDB')
+const connectDB = require('./Config/connectDB')
 const errorHandler = require('./src/api/Middlewares/globalErrorHandler')
 
 

@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const AppError = require('../api/Errors/AppError');
+const AppError = require('../Errors/AppError');
 const validateMongoId = (id) => {
     const isValid =  mongoose.Types.ObjectId.isValid(id);
     if(!isValid) {

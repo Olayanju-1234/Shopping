@@ -1,7 +1,7 @@
 const Brand = require('./BrandModel')
 const { StatusCodes } = require('http-status-codes')
 const AppError = require('../../Errors/AppError')
-const validateMongoId = require('../../../utils/validateMongoId')
+const validateMongoId = require('../../Utils/validateMongoId')
 
 const createBrand = async (req, res) => {
     const newBrand = await Brand.create(req.body)

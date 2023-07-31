@@ -2,11 +2,10 @@ const User = require('../User/UserModel')
 const { StatusCodes } = require('http-status-codes')
 const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
-const { generateAccessToken } = require('../../../config/tokens')
-const AppError = require('../../Errors/AppError')
+const { generateAccessToken } = require('../../../../Config/tokens')
 const { BadRequestError, ConflictError, ForbiddenError, NotFoundError, UnauthorizedError} = require('../../Errors/errors')
-const validateMongoId = require('../../../utils/validateMongoId');
-const sendEmail = require('../../../utils/nodemailer');
+const validateMongoId = require('../../Utils/validateMongoId');
+const sendEmail = require('../../Utils/nodemailer');
 
 
 const register = async (req, res) => {

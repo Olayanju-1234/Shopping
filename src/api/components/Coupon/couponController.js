@@ -1,7 +1,7 @@
 const Coupon = require('./couponModel');
 const { StatusCodes } = require('http-status-codes')
 const AppError = require('../../Errors/AppError')
-const validateMongoId = require('../../../utils/validateMongoId')
+const validateMongoId = require('../../Utils/validateMongoId')
 // Create Coupon
 const createCoupon = async (req, res) => {
     const newCoupon = await Coupon.create(req.body);

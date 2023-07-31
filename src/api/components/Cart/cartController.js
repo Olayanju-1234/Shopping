@@ -3,7 +3,7 @@ const User = require('../User/UserModel')
 const Product = require('../Product/productModel')
 const { StatusCodes } = require('http-status-codes')
 const AppError = require('../../Errors/AppError')
-const validateMongoId = require('../../../utils/validateMongoId')
+const validateMongoId = require('../../Utils/validateMongoId')
 
 const userCart = async (req, res, next) => {
     const { cart } = req.body

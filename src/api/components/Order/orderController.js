@@ -5,7 +5,7 @@ const Product = require('../Product/productModel')
 const uniqid = require('uniqid')
 const { StatusCodes } = require('http-status-codes')
 const AppError = require('../../Errors/AppError')
-const validateMongoId = require('../../../utils/validateMongoId')
+const validateMongoId = require('../../Utils/validateMongoId')
 
 
 const createOrder = async (req, res) => {
