@@ -1,4 +1,4 @@
-const {generateAccessToken, verifyAccessToken} = require('../../../Config/tokens')
+const {generateAccessToken, verifyAccessToken} = require('../utils/tokens')
 const jwt = require('jsonwebtoken')
 const User = require('../components/User/UserModel')
 const AppError = require('../Errors/AppError')

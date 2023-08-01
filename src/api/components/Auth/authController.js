@@ -2,7 +2,7 @@ const User = require('../User/UserModel')
 const { StatusCodes } = require('http-status-codes')
 const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
-const { generateAccessToken } = require('../../../../Config/tokens')
+const { generateAccessToken, generateRefreshToken } = require('../../utils/tokens')
 const { BadRequestError, ConflictError, ForbiddenError, NotFoundError, UnauthorizedError} = require('../../Errors/errors')
 const validateMongoId = require('../../Utils/validateMongoId');
 const sendEmail = require('../../Utils/nodemailer');
@@ -57,7 +57,7 @@ const login = async (req, res) => {
         throw new UnauthorizedError("Incorrect password")
     }
 
-    const refreshToken = await generateRefreshToken(usernameExists._id)
+    const refreshToken = generateRefreshToken(usernameExists._id)
 
     await User.findByIdAndUpdate(usernameExists._id, {refreshToken: refreshToken},
         {new:true});
@@ -68,9 +68,8 @@ const login = async (req, res) => {
     })
 
     res.status(StatusCodes.OK).json({
-        success : true,
-        user: usernameExists,
-        token: generateAccessToken(usernameExists._id)
+        success : "Successfully logged in",
+        user: usernameExists.username,
     })
 }
 
@@ -200,6 +199,7 @@ const resetPasswordToken = async (req, res) => {
     if (!email) {
         throw new BadRequestError('Make sure all required fields are filled')
     }
+
     const user = await User.findOne({email})
 
     if(!user) {
