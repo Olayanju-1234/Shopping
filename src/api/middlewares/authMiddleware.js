@@ -1,7 +1,7 @@
 const {generateAccessToken, verifyAccessToken} = require('../utils/tokens')
 const jwt = require('jsonwebtoken')
 const User = require('../components/User/UserModel')
-const AppError = require('../Errors/AppError')
+const AppError = require('../errors/CustomError')
 
 
 const authMiddleware = async (req, res, next) => {

@@ -1,5 +1,5 @@
 const { StatusCodes } = require('http-status-codes');
-const AppError = require('./AppError');
+const AppError = require('./CustomError');
 
 class ConflictError extends AppError {
     constructor(message) {

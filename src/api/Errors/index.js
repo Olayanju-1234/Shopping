@@ -1,4 +1,4 @@
-const AppError = require('./AppError')
+const AppError = require('./CustomError')
 const BadRequestError = require('./badRequest')
 const NotFoundError = require('./notFound')
 const UnauthorizedError = require('./unauthorized')

@@ -2,7 +2,7 @@ const Cart = require('./CartModel')
 const User = require('../User/UserModel')
 const Product = require('../Product/productModel')
 const { StatusCodes } = require('http-status-codes')
-const AppError = require('../../Errors/AppError')
+const AppError = require('../../errors/CustomError')
 const validateMongoId = require('../../Utils/validateMongoId')
 
 const userCart = async (req, res, next) => {

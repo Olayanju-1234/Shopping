@@ -1,6 +1,6 @@
 const Blog = require('./BlogModel')
 const { StatusCodes } = require('http-status-codes')
-const AppError = require('../../Errors/AppError')
+const AppError = require('../../errors/CustomError')
 const validateMongoId = require('../../Utils/validateMongoId')
 const { uploadImage } = require('../../Utils/cloudinary');
 const fs = require('fs')

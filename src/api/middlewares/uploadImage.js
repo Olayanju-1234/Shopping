@@ -1,7 +1,7 @@
 const multer = require('multer');
 const sharp = require('sharp');
 const path = require('path');
-const AppError = require('../Errors/AppError');
+const AppError = require('../errors/CustomError');
 const fs = require('fs');
 
 const multerStorage = multer.diskStorage({

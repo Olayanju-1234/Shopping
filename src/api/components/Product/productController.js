@@ -1,7 +1,7 @@
 const Product = require('./productModel');
 const User = require('../User/UserModel');
 const { StatusCodes } = require('http-status-codes')
-const AppError = require('../../Errors/AppError')
+const AppError = require('../../errors/CustomError')
 const validateMongoId = require('../../Utils/validateMongoId')
 const slugify = require('slugify');
 const { uploadImage } = require('../../Utils/cloudinary');

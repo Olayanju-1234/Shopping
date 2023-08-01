@@ -4,7 +4,7 @@ const Product = require('../Product/productModel')
 
 const uniqid = require('uniqid')
 const { StatusCodes } = require('http-status-codes')
-const AppError = require('../../Errors/AppError')
+const AppError = require('../../errors/CustomError')
 const validateMongoId = require('../../Utils/validateMongoId')
 
 
