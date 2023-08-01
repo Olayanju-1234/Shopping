@@ -10,9 +10,9 @@ const cors = require('cors')
 
 const app = express()
 
-const apiRoutes = require('./src/api/components/index')
+const apiRoutes = require('./api/components/index')
 const connectDB = require('./Config/connectDB')
-const errorHandler = require('./src/api/Middlewares/globalErrorHandler')
+const errorHandler = require('./api/Middlewares/globalErrorHandler')
 
 
 app.use(express.json())
@@ -31,7 +31,7 @@ app.use(errorHandler)
 const port = process.env.PORT || 5000;
 const start = async() =>{
     try {
-        await connectDB();
+        connectDB();
         app.listen(port, () =>{
             console.log(`server have started on port ${port}!!! `)
         })
