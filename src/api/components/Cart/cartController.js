@@ -3,12 +3,11 @@ const User = require('../User/UserModel')
 const Product = require('../Product/productModel')
 const { StatusCodes } = require('http-status-codes')
 const { NotFoundError } = require('../../errors/')
-const validateMongoId = require('../../Utils/validateMongoId')
 
 const userCart = async (req, res, next) => {
     const { cart } = req.body
     const { _id } = req.user
-    validateMongoId(_id);
+    
     let products = [];
     const user = await User.findById(_id)
     // check if user already have a product in cart
@@ -44,7 +43,7 @@ const userCart = async (req, res, next) => {
 
 const getUserCart = async (req, res) => {
     const { _id } = req.user;
-    validateMongoId(_id);
+    
     const cart = await Cart.findOne({
         orderedBy: _id
     }).populate("products.product", "_id title price priceAfterDiscount")
@@ -64,7 +63,7 @@ const getUserCart = async (req, res) => {
 
 const emptyUserCart = async (req, res) => {
     const { _id } = req.user;
-    validateMongoId(_id);
+    
     await Cart.findOneAndRemove({
         orderedBy: _id
     })

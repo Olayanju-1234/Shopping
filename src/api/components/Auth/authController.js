@@ -4,7 +4,6 @@ const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
 const { generateAccessToken, generateRefreshToken } = require('../../utils/tokens')
 const { BadRequestError, ConflictError, ForbiddenError, NotFoundError, UnauthorizedError} = require('../../errors/')
-const validateMongoId = require('../../Utils/validateMongoId');
 const sendEmail = require('../../services/emails/nodemailer');
 
 const register = async (req, res) => {
@@ -172,7 +171,6 @@ const logout = async (req, res) => {
 const updatePassword = async (req, res) => {
     const { _id } = req.user;
     const { password } = req.body;
-    validateMongoId(_id)
 
     const user = await User.findById(_id)
 

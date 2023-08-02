@@ -2,7 +2,6 @@ const Product = require('./productModel');
 const User = require('../User/UserModel');
 const { StatusCodes } = require('http-status-codes')
 const { NotFoundError } = require('../../errors/')
-const validateMongoId = require('../../Utils/validateMongoId')
 const slugify = require('slugify');
 const { uploadImage } = require('../../Utils/cloudinary');
 const fs = require('fs');
@@ -175,7 +174,6 @@ const rating = async (req, res) => {
 
 const uploadImages = async (req, res) => {
     const { id } = req.params
-    validateMongoId(id);
 
     const uploader = async (path) => await uploadImage(path, 'images')
     const urls = []

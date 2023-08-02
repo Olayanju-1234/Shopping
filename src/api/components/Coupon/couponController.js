@@ -1,7 +1,7 @@
 const Coupon = require('./couponModel');
 const { StatusCodes } = require('http-status-codes')
 const { NotFoundError } = require('../../errors/')
-const validateMongoId = require('../../Utils/validateMongoId')
+
 // Create Coupon
 const createCoupon = async (req, res) => {
     const newCoupon = await Coupon.create(req.body);
@@ -21,7 +21,7 @@ const getAllCoupons = async (req, res) => {
 
 const updateCoupons = async (req, res) => {
     const { id } = req.params
-    validateMongoId(id)
+    
     const coupons = await Coupon.findByIdAndUpdate(id, {
         $set: req.body
     }, {new:true})

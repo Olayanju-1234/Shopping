@@ -4,8 +4,6 @@ const Coupon = require('../Coupon/couponModel');
 
 const { StatusCodes } = require('http-status-codes')
 const { BadRequestError, NotFoundError } = require('../../errors/')
-const validateMongoId = require('../../Utils/validateMongoId')
-
 
 const getAllUsers = async (req, res) => {
     const users = await User.find();
@@ -19,7 +17,6 @@ const getAllUsers = async (req, res) => {
 
 const getUserById = async (req, res) => {
     const { id } = req.params
-    validateMongoId(id);
     
     const user = await User.findById(id);
     if (!user) {
@@ -85,7 +82,6 @@ const saveAddress = async (req, res) => {
 const deleteUser = async (req, res) => {
     const { id } = req.params
     // Validate id
-    validateMongoId(id);
     const user = await User.findByIdAndDelete(id);
     // Check if user exists
     if (!user) {
@@ -101,7 +97,6 @@ const deleteUser = async (req, res) => {
 const blockUser = async (req, res) => {
     const { id } = req.params
 
-    validateMongoId(id);
 
     const block = await User.findByIdAndUpdate(id, {
         $set: { isBlocked: true }
@@ -118,7 +113,6 @@ const blockUser = async (req, res) => {
 const unblockUser = async (req, res) => {
     const { id } = req.params
     // Validate id
-    validateMongoId(id);
     const unblock = await User.findByIdAndUpdate(id, {
         $set: { isBlocked: false }
     }, { new: true })

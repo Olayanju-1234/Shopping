@@ -5,16 +5,12 @@ const Product = require('../Product/productModel')
 const uniqid = require('uniqid')
 const { StatusCodes } = require('http-status-codes')
 const { BadRequestError } = require('../../errors/')
-const validateMongoId = require('../../Utils/validateMongoId')
-
 
 const createOrder = async (req, res) => {
     const {
         body: {COD, couponApplied},
         user:{ _id }
     } = req;
-
-    validateMongoId(_id)
 
     if(!COD) {
         throw new BadRequestError("Create Cash order failed")
@@ -65,8 +61,7 @@ const createOrder = async (req, res) => {
 }
 
 const getOrders = async (req, res) => {
-    const { _id } = req.user
-    validateMongoId(_id)
+    const { _id } = req.use
     const userOrders = await Order.findOne({
         orderedBy: _id
     }).populate("products.product", "_id title price priceAfterDiscount quantity sold images")

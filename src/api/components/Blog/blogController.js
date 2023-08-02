@@ -1,7 +1,6 @@
 const Blog = require('./BlogModel')
 const { StatusCodes } = require('http-status-codes')
 const { NotFoundError } = require('../../errors/')
-const validateMongoId = require('../../Utils/validateMongoId')
 const { uploadImage } = require('../../Utils/cloudinary');
 const fs = require('fs')
 
@@ -15,7 +14,7 @@ const createBlog = async (req, res) => {
 
 const updateBlog = async (req, res) => {
     const { id } = req.params
-    validateMongoId(id)
+   
     const updateBlog = await Blog.findByIdAndUpdate(id, {
         $set: req.body
     }, { new: true });
@@ -28,7 +27,7 @@ const updateBlog = async (req, res) => {
 
 const getSingleBlog = async (req, res) => {
     const { id } = req.params
-    validateMongoId(id)
+   
     const getBlog = await Blog.findById(id).populate('likes', 'dislikes');
     if (!getBlog) {
         throw new NotFoundError("Blog not found")
@@ -194,7 +193,7 @@ const dislikePost = async (req, res) => {
 
 const deleteBlog = async (req, res) => {
     const { id } = req.params
-    validateMongoId(id)
+   
     const deleteBlog = await Blog.findByIdAndDelete(id)
     if (!deleteBlog) {
         throw new NotFoundError("Blog not found")
@@ -207,7 +206,7 @@ const deleteBlog = async (req, res) => {
 
 const uploadImages = async (req, res) => {
     const { id } = req.params
-    validateMongoId(id);
+   ;
     const uploader = async (path) => await uploadImage(path, 'images')
     const urls = []
     const files = req.files;
