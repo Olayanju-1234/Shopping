@@ -7,12 +7,13 @@ const morgan = require('morgan');
 const cookieParser = require('cookie-parser')
 const helmet = require('helmet') 
 const cors = require('cors')
+const logger = require('./api/utils/logger')
 
 const app = express()
 
 const apiRoutes = require('./api/components/index')
 const connectDB = require('./Config/connectDB')
-const errorHandler = require('./api/Middlewares/globalErrorHandler')
+const errorHandler = require('./api/middlewares/globalErrorHandler')
 
 
 app.use(express.json())
@@ -33,10 +34,10 @@ const start = async() =>{
     try {
         connectDB();
         app.listen(port, () =>{
-            console.log(`server have started on port ${port}!!! `)
+            logger.info(`Server is running on port ${port}`);
         })
     } catch (error) {
-        console.log(error);
+        logger.error(error);
     }
 }
 

@@ -1,3 +1,6 @@
+
+const logger = require('../api/utils/logger')
+
 const connection = {
     HOST: "localhost",
     PORT: 27017,
@@ -12,9 +15,9 @@ const connectDB = () =>{
         mongoose.connect(`mongodb://${connection.HOST}:${connection.PORT}/${connection.DB}`, {
         
         });
-        console.log('db connected')
+        logger.info("Connected to MongoDB successfully")
     } catch (error) {
-        console.log(error)
+        logger.error(error);
     }
 }
 
