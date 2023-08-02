@@ -1,10 +1,12 @@
 const { createLogger, format, transports } = require('winston');
+const { combine, colorize, timestamp, label, prettyPrint } = format;
 
 const logger = createLogger({
     level: 'info',
-    format: format.combine(
-        format.colorize(),
-        format.json(),
+    format: combine(
+        colorize(),
+        format.align(),
+        format.printf(info => `${info.level}: ${info.message}`)
     ),
 
     transports: [
