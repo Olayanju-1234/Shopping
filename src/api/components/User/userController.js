@@ -3,14 +3,14 @@ const Cart = require('../Cart/CartModel');
 const Coupon = require('../Coupon/couponModel');
 
 const { StatusCodes } = require('http-status-codes')
-const AppError = require('../../errors/CustomError')
+const { BadRequestError, NotFoundError } = require('../../errors/')
 const validateMongoId = require('../../Utils/validateMongoId')
 
 
 const getAllUsers = async (req, res) => {
     const users = await User.find();
     if (users.length < 1) {
-        throw new AppError.NotFoundError("No users found")
+        throw new NotFoundError("No users found")
     }
     res.status(StatusCodes.OK).json({
         message : "All users",
@@ -23,7 +23,7 @@ const getUserById = async (req, res) => {
     
     const user = await User.findById(id);
     if (!user) {
-        throw new AppError.NotFoundError("No user with this ID found")
+        throw new NotFoundError("No user with this ID found")
     }
 
     res.status(StatusCodes.OK).json({ 
@@ -38,16 +38,16 @@ const updateProfile = async (req, res) => {
     }, { new: true });
 
     if (!user) {
-        throw new AppError.NotFoundError("User not found")
+        throw new NotFoundError("User not found")
     }
  
     if (Object.keys(req.body).length === 0) {
-        throw new AppError.BadRequestError("Please provide a valid data")
+        throw new BadRequestError("Please provide a valid data")
     }
     // Check if email || username is taken
     const usernameOrEmailExists = await User.findOne({ $or: [{ username: req.body.username }, { email: req.body.email }] });
     if (usernameOrEmailExists) {
-        throw new AppError.BadRequestError("Username or email already exists")
+        throw new BadRequestError("Username or email already exists")
     }
 
     res.status(StatusCodes.OK).json({
@@ -69,11 +69,11 @@ const saveAddress = async (req, res) => {
     }, { new: true });
  
     if (!user) {
-        throw new AppError.NotFoundError("User not found")
+        throw new NotFoundError("User not found")
     }
     // Check if req.body is empty
     if (Object.keys(req.body).length === 0) {
-        throw new AppError.BadRequestError("Please provide a valid data")
+        throw new BadRequestError("Please provide a valid data")
     }
 
     res.status(StatusCodes.OK).json({
@@ -89,7 +89,7 @@ const deleteUser = async (req, res) => {
     const user = await User.findByIdAndDelete(id);
     // Check if user exists
     if (!user) {
-        throw new AppError.NotFoundError("User not found")
+        throw new NotFoundError("User not found")
     }
 
     res.status(StatusCodes.OK).json({
@@ -108,7 +108,7 @@ const blockUser = async (req, res) => {
     }, { new: true })
     // Check if user exists
     if (!block) {
-        throw new AppError.NotFoundError("User not found")
+        throw new NotFoundError("User not found")
     }
     res.status(StatusCodes.OK).json({
         message : "User blocked",
@@ -124,7 +124,7 @@ const unblockUser = async (req, res) => {
     }, { new: true })
     // Check if user exists
     if (!unblock) {
-        throw new AppError.NotFoundError("User not found")
+        throw new NotFoundError("User not found")
     }
     // Check if user is already unblocked
     // if (unblock.isBlocked === false) {
@@ -150,7 +150,7 @@ const useCoupon = async (req, res) => {
     validateMongoId(_id)
     const checkCoupon =  await Coupon.findOne({ name: coupon})
     if(checkCoupon === null) {
-        throw new AppError.BadRequestError("Invalid Coupon")
+        throw new BadRequestError("Invalid Coupon")
     }
     
     let { cartTotal } = await Cart.findOne({

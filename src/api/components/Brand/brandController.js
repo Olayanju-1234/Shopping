@@ -1,6 +1,6 @@
 const Brand = require('./BrandModel')
 const { StatusCodes } = require('http-status-codes')
-const AppError = require('../../errors/CustomError')
+const { NotFoundError } = require('../../errors/')
 const validateMongoId = require('../../Utils/validateMongoId')
 
 const createBrand = async (req, res) => {
@@ -28,7 +28,7 @@ const getSingleBrand = async (req, res) => {
     validateMongoId(id)
     const getBrand = await Brand.findById(id)
     if (!getBrand) {
-        throw new AppError.NotFoundError("Category not found")
+        throw new NotFoundError("Category not found")
     }
     res.status(StatusCodes.OK).json({
         success: true,
@@ -41,7 +41,7 @@ const deleteBrand = async (req, res) => {
     validateMongoId(id)
     const deleteBrand = await Brand.findByIdAndDelete(id)
     if (!deleteBrand) {
-        throw new AppError.NotFoundError("Brand not found")
+        throw new NotFoundError("Brand not found")
     }
     res.status(StatusCodes.OK).json({
         success: true,

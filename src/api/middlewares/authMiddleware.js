@@ -1,14 +1,13 @@
 const {generateAccessToken, verifyAccessToken} = require('../utils/tokens')
-const jwt = require('jsonwebtoken')
 const User = require('../components/User/UserModel')
-const AppError = require('../errors/CustomError')
+const { UnauthorizedError } = require('../errors/')
 
 
 const authMiddleware = async (req, res, next) => {
     try {
         const authHeader = req.headers['authorization']
         const token = authHeader && authHeader.split(' ')[1]
-        if (token == null) throw new AppError.UnauthorizedError('Please, add your access token')
+        if (token == null) throw new CustomError('Please, add your access token')
         const decoded = verifyAccessToken(token)
         const user = await User.findById(decoded.id)
         req.user = user
@@ -52,7 +51,7 @@ const isAdmin = async (req, res, next) => {
     const { username } = req.user
     const adminRole = await User.findOne({ username });
     if (adminRole.role !== "admin") {
-        throw new AppError.UnauthorizedError("You are not an admin")
+        throw new UnauthorizedError("You are not an admin")
     } else {
         next();
     }
@@ -60,4 +59,5 @@ const isAdmin = async (req, res, next) => {
 
 
 module.exports = {authMiddleware, 
-isAdmin}
+                  isAdmin
+                }

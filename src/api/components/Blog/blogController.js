@@ -1,6 +1,6 @@
 const Blog = require('./BlogModel')
 const { StatusCodes } = require('http-status-codes')
-const AppError = require('../../errors/CustomError')
+const { NotFoundError } = require('../../errors/')
 const validateMongoId = require('../../Utils/validateMongoId')
 const { uploadImage } = require('../../Utils/cloudinary');
 const fs = require('fs')
@@ -31,7 +31,7 @@ const getSingleBlog = async (req, res) => {
     validateMongoId(id)
     const getBlog = await Blog.findById(id).populate('likes', 'dislikes');
     if (!getBlog) {
-        throw new AppError.NotFoundError("Blog not found")
+        throw new NotFoundError("Blog not found")
     }
     await Blog.findByIdAndUpdate(id, {
         $inc : {
@@ -83,13 +83,9 @@ const getAllBlogs = async (req, res) => {
 const likePost = async (req, res) => {
     const { postId } = req.body
     validateMongoId(postId)
-    // Get blog
     const blog = await Blog.findById(postId)
-    // Get user
     const loggedInUser = req.user._id
-    // Check if user already liked the post
     const isLiked = blog.isLiked;
-    // Check if user already disliked the post
     const isDisliked = blog.dislikes.find(
         ((userId) => userId.toString()===loggedInUser.toString())
     );
@@ -201,7 +197,7 @@ const deleteBlog = async (req, res) => {
     validateMongoId(id)
     const deleteBlog = await Blog.findByIdAndDelete(id)
     if (!deleteBlog) {
-        throw new AppError.NotFoundError("Blog not found")
+        throw new NotFoundError("Blog not found")
     }
     res.status(StatusCodes.OK).json({
         success: true,

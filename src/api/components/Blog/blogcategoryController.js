@@ -1,6 +1,6 @@
 const Blog = require('./BlogCategoryModel')
 const { StatusCodes } = require('http-status-codes')
-const AppError = require('../../errors/CustomError')
+const { NotFoundError } = require('../../errors/')
 const validateMongoId = require('../../Utils/validateMongoId')
 
 const createCategory = async (req, res) => {
@@ -28,7 +28,7 @@ const getSingleCategory = async (req, res) => {
     validateMongoId(id)
     const getCategory = await Blog.findById(id)
     if (!getCategory) {
-        throw new AppError.NotFoundError("Category not found")
+        throw new NotFoundError("Category not found")
     }
     res.status(StatusCodes.OK).json({
         success: true,
@@ -41,7 +41,7 @@ const deleteCategory = async (req, res) => {
     validateMongoId(id)
     const deleteCategory = await Blog.findByIdAndDelete(id)
     if (!deleteCategory) {
-        throw new AppError.NotFoundError("Category not found")
+        throw new NotFoundError("Category not found")
     }
     res.status(StatusCodes.OK).json({
         success: true,

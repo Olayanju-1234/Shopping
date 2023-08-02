@@ -1,6 +1,6 @@
 const Coupon = require('./couponModel');
 const { StatusCodes } = require('http-status-codes')
-const AppError = require('../../errors/CustomError')
+const { NotFoundError } = require('../../errors/')
 const validateMongoId = require('../../Utils/validateMongoId')
 // Create Coupon
 const createCoupon = async (req, res) => {
@@ -35,7 +35,7 @@ const deleteCoupon = async (req, res) => {
     const { id } = req.params
     const coupon = await Coupon.findById(id);
     if(!coupon) {
-        throw new AppError.NotFoundError("Coupon not in DB")
+        throw new NotFoundError("Coupon not in DB")
     }
     await coupon.remove()
     res.status(StatusCodes.OK).json({

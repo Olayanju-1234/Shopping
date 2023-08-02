@@ -2,7 +2,7 @@ const Cart = require('./CartModel')
 const User = require('../User/UserModel')
 const Product = require('../Product/productModel')
 const { StatusCodes } = require('http-status-codes')
-const AppError = require('../../errors/CustomError')
+const { NotFoundError } = require('../../errors/')
 const validateMongoId = require('../../Utils/validateMongoId')
 
 const userCart = async (req, res, next) => {
@@ -50,7 +50,7 @@ const getUserCart = async (req, res) => {
     }).populate("products.product", "_id title price priceAfterDiscount")
 
     if(!cart) {
-        throw new AppError.NotFoundError("Cart is empty")
+        throw new NotFoundError("Cart is empty")
     }
 
     const { products, cartTotal, priceAfterDiscount } = cart;

@@ -4,7 +4,7 @@ const Product = require('../Product/productModel')
 
 const uniqid = require('uniqid')
 const { StatusCodes } = require('http-status-codes')
-const AppError = require('../../errors/CustomError')
+const { BadRequestError } = require('../../errors/')
 const validateMongoId = require('../../Utils/validateMongoId')
 
 
@@ -17,7 +17,7 @@ const createOrder = async (req, res) => {
     validateMongoId(_id)
 
     if(!COD) {
-        throw new AppError.BadRequestError("Create Cash order failed")
+        throw new BadRequestError("Create Cash order failed")
     }
 
     let userCart = await Cart.findOne({

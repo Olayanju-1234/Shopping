@@ -1,7 +1,7 @@
 const Product = require('./productModel');
 const User = require('../User/UserModel');
 const { StatusCodes } = require('http-status-codes')
-const AppError = require('../../errors/CustomError')
+const { NotFoundError } = require('../../errors/')
 const validateMongoId = require('../../Utils/validateMongoId')
 const slugify = require('slugify');
 const { uploadImage } = require('../../Utils/cloudinary');
@@ -32,7 +32,7 @@ const updateProduct = async (req, res) => {
     }, { new: true });
 
     if (!updateProduct) {
-        throw new AppError.NotFoundError("Product not found")
+        throw new NotFoundError("Product not found")
     }
 
     res.status(StatusCodes.OK).json({
@@ -89,7 +89,7 @@ const getAllProducts = async (req, res) => {
 
     if (req.query.page) {
         const numProducts = await Product.countDocuments()
-        if (skip >= numProducts) throw new AppError.NotFoundError('This page does not exist')
+        if (skip >= numProducts) throw new NotFoundError('This page does not exist')
     }
 
     // Find the products
@@ -104,7 +104,7 @@ const deleteProduct = async (req, res) => {
     const { id } = req.params
     const product = await Product.findByIdAndDelete(id);
     if (!product) {
-        throw new AppError.NotFoundError("Product not found")
+        throw new NotFoundError("Product not found")
     }
     res.status(StatusCodes.OK).json({
         message : "Product deleted",
