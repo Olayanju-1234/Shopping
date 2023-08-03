@@ -172,11 +172,11 @@ const updatePassword = async (req, res) => {
     const { _id } = req.user;
     const { password } = req.body;
 
-    const user = await User.findById(_id)
+    const user = await User.findById(_id);
 
     if(password) {
-        user.password = password
-        const updatedPassword = await user.save()
+        user.password = password;
+        const updatedPassword = await user.save();
 
         res.status(StatusCodes.OK).json({
             success : true,

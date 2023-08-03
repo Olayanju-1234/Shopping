@@ -5,8 +5,8 @@ const logger = createLogger({
     level: 'info',
     format: combine(
         colorize(),
-        format.align(),
-        format.printf(info => `${info.level}: ${info.message}`)
+        align(),
+        printf(info => `${info.level}: ${info.message}`)
     ),
 
     transports: [
