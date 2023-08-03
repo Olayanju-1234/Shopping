@@ -14,7 +14,7 @@ const app = express()
 const apiRoutes = require('./api/components/index')
 const connectDB = require('./Config/connectDB')
 const errorHandler = require('./api/middlewares/globalErrorHandler')
-
+ 
 
 app.use(express.json())
 app.use(cors())

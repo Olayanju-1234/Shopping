@@ -4,7 +4,7 @@ const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
 const { generateAccessToken, generateRefreshToken } = require('../../utils/tokens')
 const { BadRequestError, ConflictError, ForbiddenError, NotFoundError, UnauthorizedError} = require('../../errors/')
-const sendEmail = require('../../services/emails/nodemailer');
+const sendPasswordResetMail = require('../../services/emails/sendPasswordResetMail');
 
 const register = async (req, res) => {
     const {firstName, lastName, email, username, password} = req.body
@@ -33,7 +33,6 @@ const register = async (req, res) => {
         success : true,
         user: newUser
     })
-
 }
 
 const login = async (req, res) => {
@@ -204,17 +203,8 @@ const resetPasswordToken = async (req, res) => {
     }
     const resetToken = await user.getResetPasswordToken()
     await user.save()
-
-    const resetUrl = `Hi, ${user.username} \n\n Please click on the link below to reset your password \n\n ${process.env.CLIENT_URL}/api/v1/auth/resetpassword/${resetToken}, it expires in 10 minutes`
     
-    const message = {
-        to: user.email,
-        text: "Hey there, you're receiving this email because you (or someone else) have requested the reset of a password",
-        subject: "Password Reset",
-        html: resetUrl,
-    }
-
-    await sendEmail(message)
+    await sendPasswordResetMail(email, resetToken)
 
     res.status(StatusCodes.OK).json({
         success : true,
