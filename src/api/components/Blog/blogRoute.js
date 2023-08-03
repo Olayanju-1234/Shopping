@@ -8,25 +8,20 @@ const { createBlog,
         deleteBlog,
         likePost,
         dislikePost,
-        uploadImages } = require('./blogController')
+ } = require('./blogController')
 
-const { uploadImage,  
-        resizeBlogImage} = require('../../middlewares/uploadImage');
+ const uploader = require('../../services/upload/cloudinary');
 
 const { isAdmin, 
         authMiddleware } = require('../../Middlewares/authMiddleware')
 
 router.route('/').
-    post(authMiddleware, isAdmin, createBlog).
+    post(authMiddleware, isAdmin, uploader.single('images'), createBlog).
     get(getAllBlogs)
-
-router.route('/upload/images/:id').
-    put(authMiddleware, isAdmin, 
-        uploadImage.single('file'),
-        uploadImages);
 
 router.route('/likes').
     put(authMiddleware, likePost)
+
 router.route('/dislikes').
     put(authMiddleware, dislikePost)
     

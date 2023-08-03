@@ -1,15 +1,25 @@
 const Blog = require('./BlogModel')
 const { StatusCodes } = require('http-status-codes')
 const { NotFoundError } = require('../../errors/')
-const uploadImage = require('../../services/upload/cloudinary');
-const fs = require('fs')
-const cloudinary = require('cloudinary').v2;
+
 
 const createBlog = async (req, res) => {
-    const newBlog = await Blog.create(req.body)
+    const { title, description, category } = req.body
+
+    if (!title || !description || !category) {
+        throw new BadRequestError('All fields are required')
+    }
+
+    // upload images
+    if (req.file) {
+        req.body.images = req.file.path
+    }
+
+    const blog = await Blog.create(req.body);
+
     res.status(StatusCodes.CREATED).json({
         success: true,
-        newBlog
+        blog
     })
 }
 
@@ -203,28 +213,6 @@ const deleteBlog = async (req, res) => {
     })
 }
 
-const uploadImages = async (req, res) => {
-    const { id } = req.params;
-
-    const result = await cloudinary.uploader.upload(req.files[0].path, {
-        folder: 'blogs',
-        resource_type: 'image',
-        public_id: `${Date.now()}`,
-    });
-
-    const blog = Blog.findById(id);
-    if (!blog) {
-        throw new NotFoundError("Blog not found")
-    }
-
-    const images = blog.images;
-    images.push(result.secure_url);
-
-    res.status(StatusCodes.OK).json({
-        success: true,
-        images
-    })
-}
 
 module.exports = {
     createBlog,
@@ -234,5 +222,4 @@ module.exports = {
     deleteBlog,
     likePost,
     dislikePost,
-    uploadImages
 }

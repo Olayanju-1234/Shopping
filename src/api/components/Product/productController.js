@@ -3,10 +3,8 @@ const User = require('../User/UserModel');
 const { StatusCodes } = require('http-status-codes')
 const { NotFoundError, BadRequestError } = require('../../errors/')
 const slugify = require('slugify');
-const uploadImage = require('../../services/upload/cloudinary');
-const fs = require('fs');
 
-// Create Product
+
 const createProduct = async (req, res) => {
     const { name, price, description, category, quantity, color, brand } = req.body
 
@@ -31,8 +29,6 @@ const createProduct = async (req, res) => {
     })
 }
 
-
-// update product
 const updateProduct = async (req, res) => { 
     if (req.body.name) {
         req.body.slug = slugify(req.body.name)
@@ -55,7 +51,6 @@ const updateProduct = async (req, res) => {
 
 }
 
-// get a product
 const getSingleProduct = async (req, res) => {
     const { id } = req.params
     
@@ -66,7 +61,6 @@ const getSingleProduct = async (req, res) => {
     })
 }
 
-// get all products
 const getAllProducts = async (req, res) => {
     // Filtering
     const queryObject = { ...req.query }
@@ -186,28 +180,6 @@ const rating = async (req, res) => {
     })
 }
 
-const uploadImages = async (req, res) => {
-    const { id } = req.params
-
-    const uploader = async (path) => await uploadImage(path, 'images')
-    const urls = []
-    const files = req.files;
-    for (const file of files) {
-        const { path } = file
-        const newPath = await uploader(path);
-        urls.push(newPath)
-        fs.unlinkSync(path)
-        
-    }
-    const product = await Product.findByIdAndUpdate(id, {
-        images: urls.map(url => {return  url })
-    }, { new: true })
-
-    res.status(StatusCodes.OK).json({
-        message : "Product images uploaded",
-        product
-    })
-}
 
 module.exports = {
     createProduct,
@@ -217,5 +189,4 @@ module.exports = {
     deleteProduct,
     wishlist,
     rating,
-    uploadImages
 }
