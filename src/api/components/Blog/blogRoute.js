@@ -11,7 +11,7 @@ const { createBlog,
         uploadImages } = require('./blogController')
 
 const { uploadImage,  
-        resizeBlogImage} = require('../../Middlewares/uploadImage');
+        resizeBlogImage} = require('../../middlewares/uploadImage');
 
 const { isAdmin, 
         authMiddleware } = require('../../Middlewares/authMiddleware')
@@ -22,7 +22,7 @@ router.route('/').
 
 router.route('/upload/images/:id').
     put(authMiddleware, isAdmin, 
-        uploadImage.array("images", 10), resizeBlogImage, 
+        uploadImage.single('file'),
         uploadImages);
 
 router.route('/likes').
@@ -34,7 +34,5 @@ router.route('/:id').
     put(authMiddleware, isAdmin, updateBlog).
     get(getSingleBlog).
     delete(authMiddleware, isAdmin, deleteBlog)
-
-
 
 module.exports = router

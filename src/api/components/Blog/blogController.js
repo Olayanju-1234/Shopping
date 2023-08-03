@@ -1,8 +1,9 @@
 const Blog = require('./BlogModel')
 const { StatusCodes } = require('http-status-codes')
 const { NotFoundError } = require('../../errors/')
-const { uploadImage } = require('../../Utils/cloudinary');
+const uploadImage = require('../../services/upload/cloudinary');
 const fs = require('fs')
+const cloudinary = require('cloudinary').v2;
 
 const createBlog = async (req, res) => {
     const newBlog = await Blog.create(req.body)
@@ -81,7 +82,6 @@ const getAllBlogs = async (req, res) => {
 
 const likePost = async (req, res) => {
     const { postId } = req.body
-    validateMongoId(postId)
     const blog = await Blog.findById(postId)
     const loggedInUser = req.user._id
     const isLiked = blog.isLiked;
@@ -135,7 +135,6 @@ const likePost = async (req, res) => {
 
 const dislikePost = async (req, res) => {
     const { postId } = req.body
-    validateMongoId(postId)
     // Get blog
     const blog = await Blog.findById(postId)
     // Get user
@@ -205,23 +204,25 @@ const deleteBlog = async (req, res) => {
 }
 
 const uploadImages = async (req, res) => {
-    const { id } = req.params
-   ;
-    const uploader = async (path) => await uploadImage(path, 'images')
-    const urls = []
-    const files = req.files;
-    for (const file of files) {
-        const { path } = file
-        const newPath = await uploader(path);
-        urls.push(newPath)
-        fs.unlinkSync(path)
+    const { id } = req.params;
+
+    const result = await cloudinary.uploader.upload(req.files[0].path, {
+        folder: 'blogs',
+        resource_type: 'image',
+        public_id: `${Date.now()}`,
+    });
+
+    const blog = Blog.findById(id);
+    if (!blog) {
+        throw new NotFoundError("Blog not found")
     }
-    const blog = await Blog.findByIdAndUpdate(id, {
-        images: urls.map(url => {return  url })
-    }, { new: true })
+
+    const images = blog.images;
+    images.push(result.secure_url);
+
     res.status(StatusCodes.OK).json({
-        message : "Post images uploaded",
-        blog
+        success: true,
+        images
     })
 }
 

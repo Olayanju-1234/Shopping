@@ -1,22 +1,36 @@
 const Product = require('./productModel');
 const User = require('../User/UserModel');
 const { StatusCodes } = require('http-status-codes')
-const { NotFoundError } = require('../../errors/')
+const { NotFoundError, BadRequestError } = require('../../errors/')
 const slugify = require('slugify');
-const { uploadImage } = require('../../Utils/cloudinary');
+const uploadImage = require('../../services/upload/cloudinary');
 const fs = require('fs');
 
 // Create Product
 const createProduct = async (req, res) => {
+    const { name, price, description, category, quantity, color, brand } = req.body
+
+    // if (!name || !price || !description || !category || !quantity || !color || !brand) {
+    //     throw new BadRequestError('All fields are required')
+    // }
+
     if (req.body.name) {
         req.body.slug = slugify(req.body.name)
     }
-    const newProduct = await Product.create(req.body)
+
+    // upload images
+    if (req.file) {
+        req.body.images = req.file.path
+    }
+
+    const product = await Product.create(req.body);
+
     res.status(StatusCodes.CREATED).json({
         message : "Product created",
-        newProduct
+        product
     })
 }
+
 
 // update product
 const updateProduct = async (req, res) => { 

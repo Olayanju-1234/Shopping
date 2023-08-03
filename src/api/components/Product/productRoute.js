@@ -11,20 +11,22 @@ const { createProduct,
         uploadImages 
 } = require('./productController');
 
-const { uploadImage, 
-        resizeProductImage } = require('../../Middlewares/uploadImage');
+// const { uploadImage, 
+//         resizeProductImage } = require('../../middlewares/uploadImage');
+
+const uploader = require('../../services/upload/cloudinary');
 
 const { isAdmin, 
         authMiddleware } = require('../../Middlewares/authMiddleware');
 
 router.route('/').
-    post(authMiddleware, isAdmin,createProduct).
+    post(authMiddleware, isAdmin, uploader.single('images'), createProduct).
     get(getAllProducts);
 
-router.route('/upload/images/:id').
-    put(authMiddleware, isAdmin, 
-        uploadImage.array("images", 10), resizeProductImage, 
-        uploadImages);
+// router.route('/upload/images/:id').
+//     put(authMiddleware, isAdmin, 
+//         uploadImage.array("images", 10), resizeProductImage, 
+//         uploadImages);
 
 router.route('/wishlist').
     put(authMiddleware, wishlist); 
