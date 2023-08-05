@@ -7,15 +7,15 @@ const { createCoupon,
         deleteCoupon
 } = require('./couponController');
 
-const { authMiddleware, isAdmin } = require('../../Middlewares/authMiddleware');
+const { authenticateUser, isAdmin } = require('../../middlewares/authMiddleware');
 
 router.route('/').
-    post(authMiddleware, isAdmin, createCoupon).
-    get(authMiddleware, isAdmin, getAllCoupons);
+    post(authenticateUser, isAdmin, createCoupon).
+    get(authenticateUser, isAdmin, getAllCoupons);
 
 router.route('/:id').
-    put(authMiddleware, isAdmin, updateCoupons).
-    delete(authMiddleware, isAdmin, deleteCoupon)
+    put(authenticateUser, isAdmin, updateCoupons).
+    delete(authenticateUser, isAdmin, deleteCoupon)
 
 
 module.exports = router

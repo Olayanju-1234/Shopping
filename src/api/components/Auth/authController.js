@@ -2,7 +2,8 @@ const User = require('../User/UserModel')
 const { StatusCodes } = require('http-status-codes')
 const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
-const { generateAccessToken, generateRefreshToken } = require('../../utils/tokens')
+const { generateToken, verifyToken, attachTokenToCookies,  } = require('../../utils/index')
+const { authenticateUser } = require('../../middlewares/authMiddleware')
 const { BadRequestError, ConflictError, ForbiddenError, NotFoundError, UnauthorizedError} = require('../../errors/')
 const sendPasswordResetMail = require('../../services/emails/sendPasswordResetMail');
 
@@ -54,15 +55,12 @@ const login = async (req, res) => {
         throw new UnauthorizedError("Incorrect password")
     }
 
-    const refreshToken = generateRefreshToken(usernameExists._id)
+    const refreshToken = generateToken(usernameExists._id)
 
     await User.findByIdAndUpdate(usernameExists._id, {refreshToken: refreshToken},
         {new:true});
 
-    res.cookie('refreshToken', refreshToken, {
-        httpOnly:true,
-        maxAge:72 * 60 * 60 * 1000
-    })
+    attachTokenToCookies(res, refreshToken)
 
     res.status(StatusCodes.OK).json({
         success : "Successfully logged in",

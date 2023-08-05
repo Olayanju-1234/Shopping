@@ -12,14 +12,14 @@ const {
     resetPassword
 } = require('./authController')
 
-const { authMiddleware } = require('../../Middlewares/authMiddleware')
+const { authenticateUser } = require('../../middlewares/authMiddleware')
 
 router.post("/", register)
 router.post("/login", login)
 router.post("/login/admin", adminLogin)
 router.post("/logout", logout)
 router.get("/refresh", handleRefreshToken)
-router.put("/password", authMiddleware, updatePassword)
+router.put("/password", authenticateUser, updatePassword)
 router.post("/reset-password-token", resetPasswordToken)
 router.put("/resetpassword/:token", resetPassword)
 

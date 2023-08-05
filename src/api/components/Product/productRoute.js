@@ -13,22 +13,22 @@ const { createProduct,
 const uploader = require('../../services/upload/cloudinary');
 
 const { isAdmin, 
-        authMiddleware } = require('../../Middlewares/authMiddleware');
+        authenticateUser } = require('../../middlewares/authMiddleware');
 
 router.route('/').
-    post(authMiddleware, isAdmin, uploader.single('images'), createProduct).
+    post(authenticateUser, isAdmin, uploader.single('images'), createProduct).
     get(getAllProducts);
 
 router.route('/wishlist').
-    put(authMiddleware, wishlist); 
+    put(authenticateUser, wishlist); 
 
 router.route('/rating').
-    put(authMiddleware, rating);
+    put(authenticateUser, rating);
 
 
 router.route('/:id').
     get(getSingleProduct).
-    put(authMiddleware, isAdmin, updateProduct).
-    delete(authMiddleware, isAdmin,deleteProduct);
+    put(authenticateUser, isAdmin, updateProduct).
+    delete(authenticateUser, isAdmin,deleteProduct);
 
 module.exports = router

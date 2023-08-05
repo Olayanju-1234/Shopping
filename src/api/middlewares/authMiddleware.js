@@ -1,49 +1,38 @@
-const {generateAccessToken, verifyAccessToken} = require('../utils/tokens')
+const {
+    generateToken, 
+    verifyToken,
+    attachTokenToCookies
+} = require('../utils/index')
+
 const User = require('../components/User/UserModel')
+
 const { UnauthorizedError } = require('../errors/')
 
 
-const authMiddleware = async (req, res, next) => {
-    try {
-        const authHeader = req.headers['authorization']
-        const token = authHeader && authHeader.split(' ')[1]
-        if (token == null) throw new CustomError('Please, add your access token')
-        const decoded = verifyAccessToken(token)
-        const user = await User.findById(decoded.id)
-        req.user = user
-        next()
-    } catch (error) {
-        next(error)
+const authenticateUser = (req, res, next) => {
+
+    const token = req.cookies.token
+
+  if (!token) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+
+  try {
+    const user = verifyToken(token);
+    if (!user) {
+      return res.status(401).json({ error: 'Invalid token' });
     }
 
+    attachTokenToCookies(res, token);
+
+    req.user = user;
+    next();
+
+  } catch (err) {
+
+    return res.status(401).json({ error: 'Invalid token' });
+  }
 }
-
-// create jwt token
-// const authMiddleware = async (req, res, next) => {
-//     const token = jwt.sign({ id: req.user.id }, process.env.JWT_SECRET, {
-//         expiresIn: "1d",
-//     });
-//     req.token = token;
-//     next();
-// };
-
-// // verify jwt token
-// const verifyToken = async (req, res, next) => {
-//     const token = jwt.verify(req.token, process.env.JWT_SECRET);
-//     return token;
-// };
-
-// // attach cookie to response
-// const attachToken = async (req, res, next) => {
-//     res.cookie("token", req.token, {
-//         httpOnly: true,
-//         secure: true,
-//         sameSite: "none",
-//     });
-
-//     next();
-// };
-
 
 
 
@@ -58,6 +47,6 @@ const isAdmin = async (req, res, next) => {
 }
 
 
-module.exports = {authMiddleware, 
+module.exports = {authenticateUser, 
                   isAdmin
                 }

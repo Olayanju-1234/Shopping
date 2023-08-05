@@ -8,16 +8,16 @@ const { createBrand,
         deleteBrand 
 } = require('./brandController')
 
-const { authMiddleware, isAdmin } = require('../../Middlewares/authMiddleware')
+const { authenticateUser, isAdmin } = require('../../middlewares/authMiddleware')
 
 router.route('/').
-    post(authMiddleware, isAdmin, createBrand).
+    post(authenticateUser, isAdmin, createBrand).
     get(getAllBrands)
 
 router.route('/:id').
-    put(authMiddleware, isAdmin, updateBrand).
-    get(authMiddleware, getSingleBrand).
-    delete(authMiddleware, isAdmin, deleteBrand)
+    put(authenticateUser, isAdmin, updateBrand).
+    get(authenticateUser, getSingleBrand).
+    delete(authenticateUser, isAdmin, deleteBrand)
 
 
 module.exports = router

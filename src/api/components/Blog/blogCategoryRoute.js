@@ -8,16 +8,16 @@ const { createCategory,
         deleteCategory 
 } = require('./blogCategoryController')
 
-const { authMiddleware, isAdmin } = require('../../Middlewares/authMiddleware')
+const { authenticateUser, isAdmin } = require('../../middlewares/authMiddleware')
 
 router.route('/').
-    post(authMiddleware, isAdmin, createCategory).
+    post(authenticateUser, isAdmin, createCategory).
     get(getAllCategories)
 
 router.route('/:id').
-    put(authMiddleware, isAdmin, updateCategory).
-    get(authMiddleware, getSingleCategory).
-    delete(authMiddleware, isAdmin, deleteCategory)
+    put(authenticateUser, isAdmin, updateCategory).
+    get(authenticateUser, getSingleCategory).
+    delete(authenticateUser, isAdmin, deleteCategory)
 
 
 module.exports = router

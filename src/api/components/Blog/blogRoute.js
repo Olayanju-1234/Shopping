@@ -13,21 +13,21 @@ const { createBlog,
  const uploader = require('../../services/upload/cloudinary');
 
 const { isAdmin, 
-        authMiddleware } = require('../../Middlewares/authMiddleware')
+        authenticateUser } = require('../../middlewares/authMiddleware')
 
 router.route('/').
-    post(authMiddleware, isAdmin, uploader.single('images'), createBlog).
+    post(authenticateUser, isAdmin, uploader.single('images'), createBlog).
     get(getAllBlogs)
 
 router.route('/likes').
-    put(authMiddleware, likePost)
+    put(authenticateUser, likePost)
 
 router.route('/dislikes').
-    put(authMiddleware, dislikePost)
+    put(authenticateUser, dislikePost)
     
 router.route('/:id').
-    put(authMiddleware, isAdmin, updateBlog).
+    put(authenticateUser, isAdmin, updateBlog).
     get(getSingleBlog).
-    delete(authMiddleware, isAdmin, deleteBlog)
+    delete(authenticateUser, isAdmin, deleteBlog)
 
 module.exports = router

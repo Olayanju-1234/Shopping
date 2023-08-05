@@ -25,31 +25,31 @@ const {
     updateOrderStatus
 } = require('../Order/orderController')
 
-const {authMiddleware,
+const {authenticateUser,
         isAdmin
-} = require('../../Middlewares/authMiddleware');
+} = require('../../middlewares/authMiddleware');
 
 
 router.route('/').get(getAllUsers);
-router.put("/edit", authMiddleware, updateProfile)
-router.put("/address", authMiddleware, saveAddress)
+router.put("/edit", authenticateUser, updateProfile)
+router.put("/address", authenticateUser, saveAddress)
 
-router.put('/order-status/:orderId', authMiddleware, isAdmin, updateOrderStatus)
+router.put('/order-status/:orderId', authenticateUser, isAdmin, updateOrderStatus)
 
 router.route('/cart').
-    post(authMiddleware, userCart).
-    get(authMiddleware, getUserCart).
-    delete(authMiddleware, emptyUserCart)
+    post(authenticateUser, userCart).
+    get(authenticateUser, getUserCart).
+    delete(authenticateUser, emptyUserCart)
 
-router.put('/block/:id', authMiddleware, isAdmin, blockUser)
-router.put('/unblock/:id', authMiddleware, isAdmin, unblockUser)
-router.get('/wishlist', authMiddleware, getWishlist)
-router.post('/cart/use-coupon', authMiddleware, useCoupon)
-router.post('/cart/create-order', authMiddleware, createOrder)
-router.get('/orders', authMiddleware, getOrders)
+router.put('/block/:id', authenticateUser, isAdmin, blockUser)
+router.put('/unblock/:id', authenticateUser, isAdmin, unblockUser)
+router.get('/wishlist', authenticateUser, getWishlist)
+router.post('/cart/use-coupon', authenticateUser, useCoupon)
+router.post('/cart/create-order', authenticateUser, createOrder)
+router.get('/orders', authenticateUser, getOrders)
 
 router.route('/:id')
-    .get(authMiddleware, isAdmin, getUserById)
+    .get(authenticateUser, isAdmin, getUserById)
     .delete(deleteUser)
 ;
 
