@@ -55,7 +55,7 @@ const login = async (req, res) => {
         throw new UnauthorizedError("Incorrect password")
     }
 
-    const refreshToken = generateToken(usernameExists._id)
+    const refreshToken = generateToken(usernameExists)
 
     await User.findByIdAndUpdate(usernameExists._id, {refreshToken: refreshToken},
         {new:true});
