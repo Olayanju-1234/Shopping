@@ -1,5 +1,5 @@
 const { createLogger, format, transports } = require('winston');
-const { combine, colorize, timestamp, align, printf } = format;
+const { combine, colorize, align, printf } = format;
 
 const logger = createLogger({
     level: 'info',

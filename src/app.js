@@ -13,7 +13,7 @@ const app = express()
 
 const apiRoutes = require('./api/components/index')
 const connectDB = require('./Config/connectDB')
-const errorHandler = require('./api/middlewares/globalErrorHandler')
+const errorHandler = require('./api/middlewares/errorHandler')
  
 
 app.use(express.json())
