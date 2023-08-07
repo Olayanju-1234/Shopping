@@ -27,7 +27,7 @@ const {
 
 const {authenticateUser,
         isAdmin
-} = require('../../middlewares/authMiddleware');
+} = require('../../middlewares/authenticate');
 
 
 router.route('/').get(getAllUsers);

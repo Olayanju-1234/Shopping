@@ -13,7 +13,7 @@ const { createBlog,
  const uploader = require('../../services/upload/cloudinary');
 
 const { isAdmin, 
-        authenticateUser } = require('../../middlewares/authMiddleware')
+        authenticateUser } = require('../../middlewares/authenticate')
 
 router.route('/').
     post(authenticateUser, isAdmin, uploader.single('images'), createBlog).

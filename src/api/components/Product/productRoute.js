@@ -13,10 +13,10 @@ const { createProduct,
 const uploader = require('../../services/upload/cloudinary');
 
 const { isAdmin, 
-        authenticateUser } = require('../../middlewares/authMiddleware');
+        authenticateUser } = require('../../middlewares/authenticate');
 
 router.route('/').
-    post(authenticateUser, isAdmin, uploader.single('images'), createProduct).
+    post(authenticateUser, uploader.single('images'), createProduct).
     get(getAllProducts);
 
 router.route('/wishlist').

@@ -1,9 +1,11 @@
+
+const Token = require('../../tokens/token')
 const User = require('../User/UserModel')
 const { StatusCodes } = require('http-status-codes')
 const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
 const { generateToken, verifyToken, attachTokenToCookies,  } = require('../../utils/index')
-const { authenticateUser } = require('../../middlewares/authMiddleware')
+const { authenticateUser } = require('../../middlewares/authenticate')
 const { BadRequestError, ConflictError, ForbiddenError, NotFoundError, UnauthorizedError} = require('../../errors/')
 const sendPasswordResetMail = require('../../services/emails/sendPasswordResetMail');
 
@@ -36,37 +38,57 @@ const register = async (req, res) => {
     })
 }
 
-const login = async (req, res) => {
-    const {username, password} = req.body
+const login = async(req,res) =>{
+    const {username,password} = req.body;
 
-    if (!username || !password) {
-        throw new BadRequestError('Make sure all required fields are filled')
+    if(!username||!password){
+        throw new BadRequestError('Please provide the need values');
     }
 
-    const usernameExists = await User.findOne({username})
-
-    if(!usernameExists) {
-        throw new NotFoundError("User not found, Please register")
+    const user = await User.findOne({username});
+    
+    if(!user){
+        throw new NotFoundError(`User doesn't exist, Please sign up`);
     }
 
-    const passwordMatch = await usernameExists.matchedPassword(password)
-
-    if(!passwordMatch) {
-        throw new UnauthorizedError("Incorrect password")
+ 
+    const isPasswordCorrect = await user.matchedPassword(password);
+    if(!isPasswordCorrect){
+        throw new BadRequestError(`Invalid password, check and try again`)
     }
 
-    const refreshToken = generateToken(usernameExists)
+    let refreshToken = '';
 
-    await User.findByIdAndUpdate(usernameExists._id, {refreshToken: refreshToken},
-        {new:true});
+    const existingToken = await Token.findOne({user: user._id});
+    if(existingToken){
+        const {isValid} = existingToken;
+        if(!isValid){
+            throw new UnauthorizedError('your are temporarily restricted from this app.')
+        }
 
-    attachTokenToCookies(res, refreshToken)
+        refreshToken = existingToken.refreshToken;
 
-    res.status(StatusCodes.OK).json({
-        success : "Successfully logged in",
-        user: usernameExists.username,
-    })
-}
+        const userToken = {username: user.username, email: user.email, role: user.role, userId: user._id};
+        attachTokenToCookies({res, user:userToken, refreshToken});
+
+        res.status(StatusCodes.OK).json({success:true, user:userToken});
+        return;
+    }
+
+    refreshToken = crypto.randomBytes(40).toString('hex');
+
+    const userAgent = req.headers['user-agent']
+
+    const userT = {refreshToken,userAgent,user:user._id};
+    
+    await Token.create(userT);
+    
+    const userToken = {username: user.username, email: user.email, role: user.role, userId: user._id};
+    attachTokenToCookies({res, user:userToken, refreshToken});
+
+    res.status(StatusCodes.OK).json({success:true, user:userToken});
+
+};
 
 const adminLogin = async (req, res) => {
     const {username, password} = req.body

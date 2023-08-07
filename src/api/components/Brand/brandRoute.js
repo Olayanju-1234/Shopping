@@ -8,7 +8,7 @@ const { createBrand,
         deleteBrand 
 } = require('./brandController')
 
-const { authenticateUser, isAdmin } = require('../../middlewares/authMiddleware')
+const { authenticateUser, isAdmin } = require('../../middlewares/authenticate')
 
 router.route('/').
     post(authenticateUser, isAdmin, createBrand).

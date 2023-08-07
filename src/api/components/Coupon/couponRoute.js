@@ -7,7 +7,7 @@ const { createCoupon,
         deleteCoupon
 } = require('./couponController');
 
-const { authenticateUser, isAdmin } = require('../../middlewares/authMiddleware');
+const { authenticateUser, isAdmin } = require('../../middlewares/authenticate');
 
 router.route('/').
     post(authenticateUser, isAdmin, createCoupon).
