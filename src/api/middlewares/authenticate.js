@@ -1,20 +1,17 @@
+
 const {
-    generateToken, 
     verifyToken,
     attachTokenToCookies
 } = require('../utils/index')
 
 const Token = require('../tokens/token')
+const User = require('../components/User/UserModel')
 
 const { UnauthorizedError, BadRequestError,  } = require('../errors')
-
-
 
 const authenticateUser = (req,res,next) =>{
 
   const {accessToken} = req.signedCookies;
-
-  
 
   try {
       if(accessToken){
@@ -36,14 +33,11 @@ const authenticateUser = (req,res,next) =>{
       attachTokenToCookies({res, user: payload.user, refreshToken:existingToken.refreshToken});
       req.user = payload.user;
       next();
+
   } catch (error) {
       throw new BadRequestError('Authentication failed');
   }
-  
-
 }
-
-
 
 const isAdmin = async (req, res, next) => {
     const { username } = req.user
@@ -56,6 +50,7 @@ const isAdmin = async (req, res, next) => {
 }
 
 
-module.exports = {authenticateUser, 
-                  isAdmin
+module.exports = {
+                  isAdmin,
+                  authenticateUser, 
                 }
