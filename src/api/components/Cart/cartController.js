@@ -72,49 +72,6 @@ const emptyUserCart = async (req, res) => {
     })
 }
 
-const clearCart = async (req, res) => {
-    const { _id } = req.user;
-
-    acceptPayment: async (req, res) => {
-        try {
-            const email = req.body.email;
-            const amount = req.body.amount;
-
-            // params
-            const params = JSON.stringify({
-                "email": email,
-                "amount": amount * 100,
-            });
-
-            // options
-            const options = {
-                hostname: 'api.paystack.co',
-                path: '/transaction/initialize',
-                method: 'POST',
-                headers: {
-                    Authorization: `Bearer ${process.env.PAYSTACK_SECRET_KEY}`,
-                    'Content-Type': 'application/json'
-                }
-            };
-
-            // request
-            const request = https.request(options, (response) => {
-                response.on('data', (data) => {
-                    const { authorization_url } = JSON.parse(data);
-                    res.redirect(authorization_url);
-                });
-            }
-            );
-
-            request.write(params);
-            request.end();
-        }
-        catch (error) {
-            console.log(error);
-        }
-    }
-}
-
 
 module.exports = {
     userCart,
