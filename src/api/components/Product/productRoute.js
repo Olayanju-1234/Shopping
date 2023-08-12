@@ -32,3 +32,4 @@ router.route('/:id').
     delete(authenticateUser, isAdmin,deleteProduct);
 
 module.exports = router
+
