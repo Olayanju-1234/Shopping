@@ -8,8 +8,12 @@ const cookieParser = require('cookie-parser')
 const helmet = require('helmet') 
 const cors = require('cors')
 const logger = require('./api/utils/logger')
+const swaggerUi = require('swagger-ui-express');
+const specs = require('./swagger'); // Path to your Swagger configuration file
 
-const app = express()
+const app = express();
+
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
 
 const apiRoutes = require('./api/components/index')
 const connectDB = require('./Config/connectDB')
