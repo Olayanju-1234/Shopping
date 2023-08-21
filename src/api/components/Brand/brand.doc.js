@@ -1,5 +1,12 @@
 /**
  * @swagger
+ * tags:
+ *  name: Brand
+ *  description: Brand management
+ */
+
+/**
+ * @swagger
  * /brand:
  *   post:
  *     summary: Create a new brand
