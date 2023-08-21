@@ -7,7 +7,7 @@
 
 /**
  * @swagger
- * /coupons:
+ * /coupon:
  *   post:
  *     summary: Create a new coupon
  *     tags: [Coupons]
@@ -35,7 +35,7 @@
 
 /**
  * @swagger
- * /coupons:
+ * /coupon:
  *   get:
  *     summary: Get all coupons
  *     tags: [Coupons]
@@ -59,7 +59,7 @@
 
 /**
  * @swagger
- * /coupons/{id}:
+ * /coupon/{id}:
  *   put:
  *     summary: Update a coupon
  *     tags: [Coupons]
@@ -95,7 +95,7 @@
 
 /**
  * @swagger
- * /coupons/{id}:
+ * /coupon/{id}:
  *   delete:
  *     summary: Delete a coupon
  *     tags: [Coupons]
