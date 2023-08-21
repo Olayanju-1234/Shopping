@@ -1,5 +1,12 @@
 /**
  * @swagger
+ * tags:
+ *  name: Cart
+ *  description: Endpoints for managing cart
+ */
+
+/**
+ * @swagger
  * /cart:
  *   post:
  *     summary: Add products to user's cart
