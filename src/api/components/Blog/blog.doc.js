@@ -1,12 +1,5 @@
 /**
  * @swagger
- * tags:
- *   name: Blog
- *   description: Endpoints for managing blog posts
- */
-
-/**
- * @swagger
  * components:
  *   schemas:
  *     Blog:
@@ -34,6 +27,13 @@
  *           type: boolean
  *         isDisliked:
  *           type: boolean
+ */
+
+/**
+ * @swagger
+ * tags:
+ *   name: Blog
+ *   description: Endpoints for managing blog posts
  */
 
 /**
@@ -128,12 +128,12 @@
  *         name: page
  *         schema:
  *           type: integer
- *         description: Page number for pagination (default: 1)
+ *         description: Page number for pagination 
  *       - in: query
  *         name: limit
  *         schema:
  *           type: integer
- *         description: Number of blog posts per page (default: 10)
+ *         description: Number of blog posts per 
  *       - in: query
  *         name: sort
  *         schema:
