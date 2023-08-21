@@ -5,43 +5,100 @@
  *     Product:
  *       type: object
  *       properties:
- *          Define properties of the Product schema here
- *          ...
- *     User:
- *       type: object
- *       properties:
- *         Define properties of the User schema here
- *          ...
+ *         name:
+ *           type: string
+ *         slug:
+ *           type: string
+ *         description:
+ *           type: string
+ *         price:
+ *           type: number
+ *         category:
+ *           type: string
+ *         brand:
+ *           type: string
+ *         sold:
+ *           type: number
+ *         quantity:
+ *           type: number
+ *         images:
+ *           type: array
+ *           items:
+ *             type: string
+ *         color:
+ *           type: string
+ *         ratings:
+ *           type: array
+ *           items:
+ *             type: object
+ *             properties:
+ *               star:
+ *                 type: number
+ *               comment:
+ *                 type: string
+ *               postedBy:
+ *                 type: string
+ *         totalRatings:
+ *           type: number
  */
+
 
 /**
  * @swagger
  * /product:
  *   get:
  *     summary: Get all products
+ *     tags: [Product]
  *     parameters:
- *       Define query parameters for pagination, sorting, filtering, etc.
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *         description: Page number for pagination (default: 1)
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *         description: Number of products per page (default: 5)
+ *       - in: query
+ *         name: sort
+ *         schema:
+ *           type: string
+ *         description: Sorting order (e.g., "createdAt" or "-createdAt")
+ *       - in: query
+ *         name: fields
+ *         schema:
+ *           type: string
+ *         description: Selected fields to include in the response (comma-separated)
+ *       - in: query
+ *         name: ... (other query parameters)
+ *         description: Other filtering options
  *     responses:
  *       200:
  *         description: All products
  *         content:
  *           application/json:
  *             schema:
- *               type: array
- *               items:
- *                 $ref: '#/components/schemas/Product'
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 products:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/Product'
  *       404:
  *         description: Products not found
  *       500:
  *         description: Server error
  */
 
-
 /**
  * @swagger
  * /product:
  *   post:
  *     summary: Create a new product
+ *     tags: [Product]
  *     requestBody:
  *       required: true
  *       content:
@@ -66,6 +123,7 @@
  * /product/{id}:
  *   patch:
  *     summary: Update a product
+ *     tags: [Product]
  *     parameters:
  *       Define path parameter for product ID
  *     requestBody:
@@ -92,6 +150,7 @@
  * /product/{id}:
  *   get:
  *     summary: Get a single product
+ *     tags: [Product]
  *     parameters:
  *       Define path parameter for product ID
  *     responses:
@@ -112,6 +171,7 @@
  * /wishlist:
  *   post:
  *     summary: Add or remove a product from wishlist
+ *     tags: [Wishlist]
  *     requestBody:
  *       required: true
  *       content:
@@ -144,6 +204,7 @@
  * /rating:
  *   post:
  *     summary: Rate a product
+ *     tags: [Rating]
  *     requestBody:
  *       required: true
  *       content:
