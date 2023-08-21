@@ -171,7 +171,7 @@
  * /wishlist:
  *   post:
  *     summary: Add or remove a product from wishlist
- *     tags: [Wishlist]
+ *     tags: [Product]
  *     requestBody:
  *       required: true
  *       content:
@@ -204,7 +204,7 @@
  * /rating:
  *   post:
  *     summary: Rate a product
- *     tags: [Rating]
+ *     tags: [Product]
  *     requestBody:
  *       required: true
  *       content:
