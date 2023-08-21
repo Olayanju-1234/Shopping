@@ -1,5 +1,12 @@
 /**
  * @swagger
+ * tags:
+ *  name: Authentication
+ *  description: Authentication routes
+ */
+
+/**
+ * @swagger
  * components:
  *   schemas:
  *     User:
