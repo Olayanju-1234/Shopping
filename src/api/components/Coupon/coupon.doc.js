@@ -1,5 +1,12 @@
 /**
  * @swagger
+ * tags:
+ *  name: Coupons
+ *  description: Endpoints for managing coupons
+ */
+
+/**
+ * @swagger
  * /coupons:
  *   post:
  *     summary: Create a new coupon
