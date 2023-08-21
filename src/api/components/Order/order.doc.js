@@ -1,5 +1,12 @@
 /**
  * @swagger
+ * tags:
+ *  name: Orders
+ *  description: Endpoints for managing orders
+ */
+
+/**
+ * @swagger
  * /orders:
  *   post:
  *     summary: Create a new order
