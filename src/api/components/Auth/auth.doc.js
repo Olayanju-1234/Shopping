@@ -28,7 +28,7 @@
 
 /**
  * @swagger
- * /auth/register:
+ * /auth/:
  *   post:
  *     summary: Register a new user
  *     tags: [Authentication]
@@ -112,7 +112,7 @@
 
 /**
  * @swagger
- * /auth/refresh-token:
+ * /auth/refresh:
  *   get:
  *     summary: Refresh user access token
  *     tags: [Authentication]
