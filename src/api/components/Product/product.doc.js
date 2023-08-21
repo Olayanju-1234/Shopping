@@ -1,5 +1,12 @@
 /**
  * @swagger
+ * tags:
+ *  name: Product
+ *  description: Endpoints for managing products
+ */
+
+/**
+ * @swagger
  * components:
  *   schemas:
  *     Product:
@@ -42,7 +49,6 @@
  *           type: number
  */
 
-
 /**
  * @swagger
  * /product:
@@ -54,12 +60,12 @@
  *         name: page
  *         schema:
  *           type: integer
- *         description: Page number for pagination (default: 1)
+ *         description: Page number for pagination 
  *       - in: query
  *         name: limit
  *         schema:
  *           type: integer
- *         description: Number of products per page (default: 5)
+ *         description: Number of products per page
  *       - in: query
  *         name: sort
  *         schema:
