@@ -1,5 +1,12 @@
 /**
  * @swagger
+ * tags:
+ *  name: Users
+ *  description: Endpoints for managing users
+ */
+
+/**
+ * @swagger
  * /users:
  *   get:
  *     summary: Get all users
