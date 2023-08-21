@@ -7,7 +7,7 @@
 
 /**
  * @swagger
- * /users:
+ * /user:
  *   get:
  *     summary: Get all users
  *     tags: [Users]
@@ -33,7 +33,7 @@
 
 /**
  * @swagger
- * /users/{id}:
+ * /user/{id}:
  *   get:
  *     summary: Get user by ID
  *     tags: [Users]
@@ -63,7 +63,7 @@
 
 /**
  * @swagger
- * /users/{id}:
+ * /user/{id}:
  *   put:
  *     summary: Update user profile
  *     tags: [Users]
@@ -101,7 +101,7 @@
 
 /**
  * @swagger
- * /users/{id}:
+ * /user/{id}:
  *   delete:
  *     summary: Delete user by ID
  *     tags: [Users]
@@ -131,7 +131,7 @@
 
 /**
  * @swagger
- * /users/{id}/block:
+ * /user/block/{id}:
  *   put:
  *     summary: Block user by ID
  *     tags: [Users]
@@ -159,7 +159,7 @@
 
 /**
  * @swagger
- * /users/{id}/unblock:
+ * /user/unblock/{id}:
  *   put:
  *     summary: Unblock user by ID
  *     tags: [Users]
@@ -187,7 +187,7 @@
 
 /**
  * @swagger
- * /users/{id}/wishlist:
+ * /user/wishlist:
  *   get:
  *     summary: Get user's wishlist by ID
  *     tags: [Users]
@@ -217,7 +217,7 @@
 
 /**
  * @swagger
- * /users/{id}/address:
+ * /user/address:
  *   put:
  *     summary: Save user's address
  *     tags: [Users]
@@ -258,7 +258,7 @@
 
 /**
  * @swagger
- * /users/use-coupon:
+ * /user/cart/use-coupon:
  *   post:
  *     summary: Apply coupon for user's cart
  *     tags: [Users]
