@@ -1,13 +1,16 @@
-const mongoose = require('mongoose')
-const Schema = mongoose.Schema
+const mongoose = require('mongoose');
+const { Schema } = mongoose;
 
-const brandSchema = new Schema({
+const brandSchema = new Schema(
+  {
     name: {
-        type: String,
-        required: true,
-        unique: true,
-        index: true,
+      type: String,
+      required: true,
+      unique: true,
+      index: true,
     },
-} , { timestamps: true })
+  },
+  { timestamps: true }
+);
 
-module.exports = mongoose.model('Brand', brandSchema)
+module.exports = mongoose.model('Brand', brandSchema);

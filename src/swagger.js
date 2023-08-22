@@ -14,14 +14,15 @@ const options = {
       },
     ],
   },
-  apis: [ './api/components/Auth/auth.doc.js',
-          './api/components/User/user.doc.js',
-          './api/components/Product/product.doc.js',
-          './api/components/Blog/blog.doc.js',
-          './api/components/Brand/brand.doc.js',
-          './api/components/Cart/cart.doc.js',
-          './api/components/Order/order.doc.js',
- ]
+  apis: [
+    './api/components/Auth/auth.doc.js',
+    './api/components/User/user.doc.js',
+    './api/components/Product/product.doc.js',
+    './api/components/Blog/blog.doc.js',
+    './api/components/Brand/brand.doc.js',
+    './api/components/Cart/cart.doc.js',
+    './api/components/Order/order.doc.js',
+  ],
 };
 
 const specs = swaggerJsdoc(options);

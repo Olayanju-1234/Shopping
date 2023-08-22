@@ -196,4 +196,3 @@
  *       '500':
  *         description: Server error
  */
-

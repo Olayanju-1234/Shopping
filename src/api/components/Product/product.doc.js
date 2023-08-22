@@ -60,7 +60,7 @@
  *         name: page
  *         schema:
  *           type: integer
- *         description: Page number for pagination 
+ *         description: Page number for pagination
  *       - in: query
  *         name: limit
  *         schema:
