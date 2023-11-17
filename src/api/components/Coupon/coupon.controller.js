@@ -1,6 +1,6 @@
 const Coupon = require('./coupon.model');
 const { StatusCodes } = require('http-status-codes');
-const { NotFoundError } = require('../../errors');
+const { NotFoundError } = require('../../../errors');
 
 // Create Coupon
 const createCoupon = async (req, res) => {

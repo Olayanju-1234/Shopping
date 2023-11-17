@@ -1,6 +1,6 @@
 const Blog = require('./blog.model');
 const { StatusCodes } = require('http-status-codes');
-const { NotFoundError, BadRequestError } = require('../../errors');
+const { NotFoundError, BadRequestError } = require('../../../errors');
 
 const createBlog = async (req, res) => {
   const { title, description, category } = req.body;

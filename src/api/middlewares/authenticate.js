@@ -3,7 +3,7 @@ const { verifyToken, attachTokenToCookies } = require('../../utils/index');
 const Token = require('../tokens/token');
 const User = require('../components/User/user.model');
 
-const { UnauthorizedError, BadRequestError } = require('../errors');
+const { UnauthorizedError, BadRequestError } = require('../../errors');
 
 const authenticateUser = (req, res, next) => {
   const { accessToken } = req.signedCookies;

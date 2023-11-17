@@ -1,7 +1,7 @@
 const Product = require('./product.model');
 const User = require('../User/user.model');
 const { StatusCodes } = require('http-status-codes');
-const { NotFoundError } = require('../../errors');
+const { NotFoundError } = require('../../../errors');
 const slugify = require('slugify');
 
 const createProduct = async (req, res) => {

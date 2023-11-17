@@ -1,6 +1,6 @@
 const Brand = require('./brand.model');
 const { StatusCodes } = require('http-status-codes');
-const { NotFoundError } = require('../../errors');
+const { NotFoundError } = require('../../../errors');
 
 const createBrand = async (req, res) => {
   const newBrand = await Brand.create(req.body);

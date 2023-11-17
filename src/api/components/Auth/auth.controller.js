@@ -4,7 +4,7 @@ const { StatusCodes } = require('http-status-codes');
 const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
 const { attachTokenToCookies, generateToken } = require('../../../utils');
-const { BadRequestError, ConflictError, ForbiddenError, NotFoundError, UnauthorizedError } = require('../../errors');
+const { BadRequestError, ConflictError, ForbiddenError, NotFoundError, UnauthorizedError } = require('../../../errors');
 const sendPasswordResetMail = require('../../services/emails/sendPasswordResetMail');
 
 const register = async (req, res) => {

@@ -1,6 +1,6 @@
 const Category = require('./product-category.model');
 const { StatusCodes } = require('http-status-codes');
-const { NotFoundError } = require('../../errors');
+const { NotFoundError } = require('../../../errors');
 
 const createCategory = async (req, res) => {
   const newCategory = await Category.create(req.body);
