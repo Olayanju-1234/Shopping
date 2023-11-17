@@ -3,7 +3,7 @@ const Cart = require('../Cart/cart.model');
 const Coupon = require('../Coupon/coupon.model');
 
 const { StatusCodes } = require('http-status-codes');
-const { BadRequestError, NotFoundError } = require('../../../errors');
+const { BadRequestError, NotFoundError } = require('../../errors');
 
 const getAllUsers = async (req, res) => {
   const users = await User.find();

@@ -2,7 +2,7 @@ const Cart = require('./cart.model');
 const User = require('../User/user.model');
 const Product = require('../Product/product.model');
 const { StatusCodes } = require('http-status-codes');
-const { NotFoundError } = require('../../../errors');
+const { NotFoundError } = require('../../errors');
 
 const userCart = async (req, res, next) => {
   const { cart } = req.body;

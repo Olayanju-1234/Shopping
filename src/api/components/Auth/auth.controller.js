@@ -1,11 +1,11 @@
-const Token = require('../../tokens/token');
-const User = require('../User/user.model');
-const { StatusCodes } = require('http-status-codes');
 const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
-const { attachTokenToCookies, generateToken } = require('../../utils');
-const { BadRequestError, ConflictError, ForbiddenError, NotFoundError, UnauthorizedError } = require('../../../errors');
-const sendPasswordResetMail = require('../../services/emails/sendPasswordResetMail');
+const Token = require('@token/token');
+const User = require('@user/user.model');
+const { attachTokenToCookies, generateToken } = require('@utils');
+const { StatusCodes } = require('http-status-codes');
+const { BadRequestError, ConflictError, ForbiddenError, NotFoundError, UnauthorizedError } = require('@errors');
+const sendPasswordResetMail = require('@services/emails/sendPasswordResetMail');
 
 const register = async (req, res) => {
   const { firstName, lastName, email, username, password } = req.body;

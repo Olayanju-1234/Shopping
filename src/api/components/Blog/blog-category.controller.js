@@ -1,6 +1,6 @@
 const Blog = require('./blog-category.model');
 const { StatusCodes } = require('http-status-codes');
-const { NotFoundError } = require('../../../errors');
+const { NotFoundError } = require('../../errors');
 
 const createCategory = async (req, res) => {
   const newCategory = await Blog.create(req.body);

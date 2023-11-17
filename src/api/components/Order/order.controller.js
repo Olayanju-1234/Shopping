@@ -4,7 +4,7 @@ const Product = require('../Product/product.model');
 
 const uniqid = require('uniqid');
 const { StatusCodes } = require('http-status-codes');
-const { BadRequestError } = require('../../../errors');
+const { BadRequestError } = require('../../errors');
 
 const createOrder = async (req, res) => {
   const {

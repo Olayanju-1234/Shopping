@@ -12,7 +12,7 @@ const {
   resetPassword,
 } = require('./auth.controller');
 
-const { authenticateUser } = require('../../middlewares/authenticate');
+const { authenticateUser } = require('@middlewares/authenticate');
 
 router.post('/', register);
 router.post('/login', login);
