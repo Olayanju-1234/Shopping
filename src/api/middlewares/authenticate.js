@@ -1,4 +1,4 @@
-const { verifyToken, attachTokenToCookies } = require('../utils/index');
+const { verifyToken, attachTokenToCookies } = require('../../utils/index');
 
 const Token = require('../tokens/token');
 const User = require('../components/User/user.model');
