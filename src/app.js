@@ -6,7 +6,7 @@ const morgan = require('morgan');
 const cookieParser = require('cookie-parser');
 const helmet = require('helmet');
 const cors = require('cors');
-const logger = require('./utils/logger');
+const logger = require('./api/utils/logger');
 const swaggerUi = require('swagger-ui-express');
 const specs = require('./swagger'); // Path to your Swagger configuration file
 

@@ -3,7 +3,7 @@ const User = require('../User/user.model');
 const { StatusCodes } = require('http-status-codes');
 const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
-const { attachTokenToCookies, generateToken } = require('../../../utils');
+const { attachTokenToCookies, generateToken } = require('../../utils');
 const { BadRequestError, ConflictError, ForbiddenError, NotFoundError, UnauthorizedError } = require('../../../errors');
 const sendPasswordResetMail = require('../../services/emails/sendPasswordResetMail');
 
