@@ -15,7 +15,7 @@ const app = express();
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
 
 const apiRoutes = require('./api/components/index');
-const connectDB = require('./Config/connectDB');
+const connectDB = require('./config/connectDB');
 const errorHandler = require('./api/middlewares/errorHandler');
 
 app.use(express.json());
