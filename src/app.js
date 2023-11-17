@@ -7,7 +7,7 @@ const morgan = require('morgan');
 const cookieParser = require('cookie-parser');
 const helmet = require('helmet');
 const cors = require('cors');
-const logger = require('./api/utils/logger');
+const logger = require('@utils/logger');
 const swaggerUi = require('swagger-ui-express');
 const specs = require('./swagger'); // Path to your Swagger configuration file
 
@@ -15,9 +15,9 @@ const app = express();
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
 
-const apiRoutes = require('./api/components/index');
-const connectDB = require('./config/connectDB');
-const errorHandler = require('./api/middlewares/errorHandler');
+const apiRoutes = require('@components/');
+const connectDB = require('@config/connectDB');
+const errorHandler = require('@middlewares/errorHandler');
 
 app.use(express.json());
 app.use(cors());
@@ -30,6 +30,14 @@ app.use('/', (req, res) => {
   res.send('Welcome to the API');
 });
 
+// health check
+app.get('/health', (req, res) => {
+  res.status(200).json({
+    success: true,
+    message: 'Server is running',
+  });
+});
+
 app.use(errorHandler);
 
 const port = process.env.PORT || 5000;
@@ -37,11 +45,9 @@ const start = async () => {
   try {
     connectDB();
     app.listen(port, () => {
-      console.log(`Server is running on port ${port}`);
       logger.info(`Server is running on port ${port}`);
     });
   } catch (error) {
-    console.log(error);
     logger.error(error);
   }
 };

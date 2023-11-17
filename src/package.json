@@ -67,6 +67,8 @@
     "@token": "api/tokens",
     "@services": "api/services",
     "@utils": "api/utils",
+    "@components": "api/components",
+    "@config": "config",
     "@auth": "api/components/Auth",
     "@blog": "api/components/Blog",
     "@brand": "api/components/Brand",

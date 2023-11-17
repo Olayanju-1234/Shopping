@@ -1,7 +1,7 @@
 {
     "MONGO_URI":"mongodb://localhost:27017/",
     "PORT":5000,
-    "BASE_URL":"",
+    "BASE_URL":"https://shopping-ljzk.onrender.com",
     "DB_NAME":"Shopping",
     "DB_PORT":27017,
     "DB_HOST":"localhost"
