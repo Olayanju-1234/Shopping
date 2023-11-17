@@ -6,7 +6,7 @@ const morgan = require('morgan');
 const cookieParser = require('cookie-parser');
 const helmet = require('helmet');
 const cors = require('cors');
-const logger = require('../src/api/utils/logger');
+// const logger = require('../src/api/utils/logger');
 const swaggerUi = require('swagger-ui-express');
 const specs = require('./swagger'); // Path to your Swagger configuration file
 
@@ -26,7 +26,7 @@ app.use(morgan('dev'));
 app.use('/api/v1', apiRoutes);
 
 app.use('/', (req, res) => {
-  res.send('Server side rendering...');
+  res.send('Welcome to the API');
 });
 
 app.use(errorHandler);
@@ -36,9 +36,11 @@ const start = async () => {
   try {
     connectDB();
     app.listen(port, () => {
+      console.log(`Server is running on port ${port}`);
       logger.info(`Server is running on port ${port}`);
     });
   } catch (error) {
+    console.log(error);
     logger.error(error);
   }
 };
