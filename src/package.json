@@ -59,5 +59,15 @@
     "swagger-ui-express": "^5.0.0",
     "uniqid": "^5.4.0",
     "winston": "^3.10.0"
+  },
+  "_moduleAliases": {
+    "@": "src",
+    "@config": "src/config",
+    "@components": "src/api/components",
+    "@errors": "src/api/errors",
+    "@middlewares": "src/api/middlewares",
+    "@services": "src/api/services",
+    "@utils": "src/api/utils",
+    "@tokens": "src/api/tokens"
   }
 }
