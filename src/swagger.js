@@ -10,18 +10,18 @@ const options = {
     },
     servers: [
       {
-        url: 'http://localhost:5000/api/v1',
+        url: 'http://localhost:5000/api/v1' || 'https://shopping-ljzk.onrender.com/api/v1',
       },
     ],
   },
   apis: [
-    './api/components/Auth/auth.doc.js',
-    './api/components/User/user.doc.js',
-    './api/components/Product/product.doc.js',
-    './api/components/Blog/blog.doc.js',
-    './api/components/Brand/brand.doc.js',
-    './api/components/Cart/cart.doc.js',
-    './api/components/Order/order.doc.js',
+    '@auth/auth.doc.js',
+    '@user/user.doc.js',
+    '@product/product.doc.js',
+    '@blog/blog.doc.js',
+    '@brand/brand.doc.js',
+    '@cart/cart.doc.js',
+    '@order/order.doc.js',
   ],
 };
 

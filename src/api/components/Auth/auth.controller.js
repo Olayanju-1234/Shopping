@@ -2,96 +2,99 @@ const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
 const Token = require('@token/token');
 const User = require('@user/user.model');
-const { attachTokenToCookies, generateToken } = require('@utils');
 const { StatusCodes } = require('http-status-codes');
-const { BadRequestError, ConflictError, ForbiddenError, NotFoundError, UnauthorizedError } = require('@errors');
+
+const { 
+  attachTokenToCookies, 
+  generateToken, 
+  SuccessResponse, 
+  ErrorResponse } = require('@utils');
+
+const { 
+  BadRequestError, 
+  ConflictError, 
+  ForbiddenError, 
+  NotFoundError, 
+  UnauthorizedError } = require('@errors');
+  
 const sendPasswordResetMail = require('@services/emails/sendPasswordResetMail');
 
 const register = async (req, res) => {
-  const { firstName, lastName, email, username, password } = req.body;
+  try {
+    const { email, username, password, ...other } = req.body;
 
-  if (!email || !username || !password) {
-    throw new BadRequestError('Make sure all required fields are filled');
+    if (!email || !username || !password) {
+      throw new BadRequestError('Make sure all required fields are filled');
+    }
+
+    // Check if email || username is taken
+    const usernameOrEmailExists = await User.findOne({
+      $or: [{ username }, { email }],
+    });
+    if (usernameOrEmailExists) {
+      throw new ConflictError('Username or email already exists');
+    }
+
+    // Create a new user
+    const newUser = await User.create(req.body);
+
+    SuccessResponse(res, newUser, 'User created successfully');
+  } catch (error) {
+    ErrorResponse(res, error.statusCode || 500, error.message);
   }
-
-  const emailExists = await User.findOne({ email });
-
-  if (emailExists) {
-    throw new ConflictError('Email already exists');
-  }
-
-  const usernameExists = await User.findOne({ username });
-
-  if (usernameExists) {
-    throw new ConflictError('Username taken');
-  }
-
-  const newUser = await User.create({
-    firstName,
-    lastName,
-    email,
-    username,
-    password,
-  });
-
-  res.status(StatusCodes.CREATED).json({
-    success: true,
-    user: newUser,
-  });
 };
 
 const login = async (req, res) => {
-  const { username, password } = req.body;
+  try {
+    const { username, password } = req.body;
 
-  if (!username || !password) {
-    throw new BadRequestError('Please provide the need values');
-  }
-
-  const user = await User.findOne({ username });
-
-  if (!user) {
-    throw new NotFoundError(`User doesn't exist, Please sign up`);
-  }
-
-  const isPasswordCorrect = await user.matchedPassword(password);
-  if (!isPasswordCorrect) {
-    throw new BadRequestError(`Invalid password, check and try again`);
-  }
-
-  var givenToken = '';
-
-  const existingToken = await Token.findOne({ user: user._id });
-  if (existingToken) {
-    const { isValid } = existingToken;
-    if (!isValid) {
-      throw new UnauthorizedError('your are temporarily restricted from this app.');
+    if (!username || !password) {
+      throw new BadRequestError('Please provide the required values');
     }
 
-    givenToken = existingToken.refreshToken;
+    const user = await User.findOne({ username });
 
-    const userToken = { username: user.username, email: user.email, role: user.role, userId: user._id };
+    // Check if user exists and the password is correct
+    if (!user || !(await user.matchedPassword(password))) {
+      throw new UnauthorizedError('Invalid credentials');
+    }
+
+    let givenToken = '';
+
+    const existingToken = await Token.findOne({ user: user._id });
+    
+    if (existingToken?.isValid) {
+      givenToken = existingToken.refreshToken;
+    } else {
+      givenToken = existingToken?.refreshToken || crypto.randomBytes(40).toString('hex');
+    
+      if (!existingToken) {
+        const userAgent = req.headers['user-agent'];
+        await Token.create({ givenToken, userAgent, user: user._id });
+      }
+    }
+    
+    // Create user token data
+    const userToken = {
+      username: user.username,
+      email: user.email,
+      role: user.role,
+      userId: user._id,
+    };
+
+    // Attach token to cookies and send success response
     attachTokenToCookies({ res, user: userToken, givenToken });
 
-    res.status(StatusCodes.OK).json({ success: true, user: userToken });
-    return;
+    SuccessResponse(res, userToken, 'Login successful');
+  } catch (error) {
+    ErrorResponse(res, error.statusCode || 500, error.message);
   }
-
-  givenToken = crypto.randomBytes(40).toString('hex');
-
-  const userAgent = req.headers['user-agent'];
-
-  const userT = { givenToken, userAgent, user: user._id };
-
-  await Token.create(userT);
-
-  const userToken = { username: user.username, email: user.email, role: user.role, userId: user._id };
-  attachTokenToCookies({ res, user: userToken, givenToken });
-
-  res.status(StatusCodes.OK).json({ success: true, user: userToken });
 };
 
+
 const adminLogin = async (req, res) => {
-  const { username, password } = req.body;
+  try {
+    const { username, password } = req.body;
 
   if (!username || !password) {
     throw new BadRequestError('Make sure all required fields are filled');
@@ -120,12 +123,14 @@ const adminLogin = async (req, res) => {
     httpOnly: true,
     maxAge: 72 * 60 * 60 * 1000,
   });
-  res.status(StatusCodes.OK).json({
-    success: true,
-    user: user,
-    token: generateToken(user._id),
-  });
-};
+
+  SuccessResponse(res, user, 'Login successful');
+  }
+  catch (error) {
+    ErrorResponse(res, error.statusCode || 500, error.message);
+  }
+
+  };
 
 const handleRefreshToken = async (req, res) => {
   const cookie = req.cookies;
@@ -156,36 +161,38 @@ const handleRefreshToken = async (req, res) => {
 };
 
 const logout = async (req, res) => {
-  const cookie = req.cookies;
+  try {
+    const cookie = req.cookies;
 
-  if (!cookie.refreshToken) {
-    throw new BadRequestError('No refresh token');
-  }
-
-  const { refreshToken } = cookie;
-
-  const user = await User.findOne({ refreshToken });
-
-  if (!user) {
+    if (!cookie.refreshToken) {
+      throw new BadRequestError('No refresh token');
+    }
+  
+    const { refreshToken } = cookie;
+  
+    const user = await User.findOne({ refreshToken });
+  
+    if (!user) {
+      res.clearCookie('refreshToken', {
+        httpOnly: true,
+        secure: true,
+      });
+  
+      throw new ForbiddenError('No user found/ Please login or register/ No refresh token');
+    }
+  
+    await User.findOneAndUpdate({ refreshToken }, { refreshToken: null });
+  
     res.clearCookie('refreshToken', {
       httpOnly: true,
       secure: true,
     });
-
-    throw new ForbiddenError('No user found/ Please login or register/ No refresh token');
+  
+    SuccessResponse(res, null, 'Logout successful');
   }
-
-  await User.findOneAndUpdate({ refreshToken }, { refreshToken: null });
-
-  res.clearCookie('refreshToken', {
-    httpOnly: true,
-    secure: true,
-  });
-
-  res.status(StatusCodes.OK).json({
-    success: true,
-    message: 'Logged out successfully',
-  });
+  catch (error) {
+    ErrorResponse(res, error.statusCode || 500, error.message);
+  }
 };
 
 const updatePassword = async (req, res) => {
