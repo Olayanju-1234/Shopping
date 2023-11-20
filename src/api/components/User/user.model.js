@@ -24,6 +24,7 @@ const userSchema = new Schema(
     password: {
       type: String,
       required: true,
+      select: false,
     },
     role: {
       type: String,
@@ -35,19 +36,17 @@ const userSchema = new Schema(
     },
     cart: {
       type: Array,
-      default: [],
+      default: undefined,
     },
-    address: [
-      {
-        type: String,
-      },
-    ],
-    wishlist: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Product',
-      },
-    ],
+    address: {
+      type: Array,
+      default: undefined,
+    },
+    wishlist: {
+      type: [mongoose.Schema.Types.ObjectId],
+      ref: 'Product',
+      default: undefined,
+    },
     passwordChangedAt: Date,
     passwordResetToken: String,
     passwordResetExpires: Date,
